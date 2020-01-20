@@ -11,8 +11,9 @@ import PropTypes from 'prop-types';
  */
 const PaginateButton = ({ onClick, arrow, text }) => {
 	return (
-		<li data-test='paginate-arrow-button' className='page-item'>
+		<li className='page-item'>
 			<button
+				data-test='paginate-button-button'
 				type='button'
 				className='page-link'
 				aria-label={text}

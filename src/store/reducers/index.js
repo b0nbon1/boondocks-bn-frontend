@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { combineReducers } from 'redux';
 import profile from './profileReducer';
 import signupReducer from './authReducers';
@@ -15,10 +16,13 @@ import createHotelReducer from './createHotelReducer';
 import getAccomodationReducers from './getAccomodationReducers';
 import getSingleHotelReducer from './getSingleHotelReducer';
 import createRoomsReducer from './createRoomsReducer';
+import requestSearchReducer, { isSearching } from './requestSearchReducer';
+import requestListReducer from './requestListReducer';
 import commentReducer from './commentReducer';
 import createTripReducer from './createTripReducer';
 import editRequestReducer from './editRequestReducer';
 import notificationReducer from './notificationReducer';
+import markAllNotificationsAsReadReducer from './markAllNotificationsAsReadReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
@@ -38,11 +42,15 @@ const reducers = combineReducers({
 	createRoomState: createRoomsReducer,
 	hotelState: getAccomodationReducers,
 	singleHotelState: getSingleHotelReducer,
+	requestSearchState: requestSearchReducer,
+	isSearchingState: isSearching,
+	requestListState: requestListReducer,
 	commentState: commentReducer,
 	createTripState: createTripReducer,
 	updateTripState: editRequestReducer,
 	notificationState: notificationReducer,
 	markAsReadState: notificationReducer,
+	markAllNotificationsAsReadState: markAllNotificationsAsReadReducer,
 });
 
 export default reducers;

@@ -3,22 +3,36 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+// import { Notifications } from "../Notifications";
 import Notifications from '../Notifications';
 
-export const evenNotificationClass = idx => (idx % 2 === 1 ? ' bg-gray' : '');
-
-const NavLinkItem = ({
+export const NavLinkItem = ({
 	linkText,
 	linkRoute,
 	icon,
 	haspopup,
 	notifications,
 }) => {
+	const [unreadNotifications, setUnreadNotifications] = useState([]);
+
+	useEffect(() => {
+		if (notifications !== null) {
+			setUnreadNotifications(
+				notifications.data.filter(
+					notification => notification.isRead === false,
+				),
+			);
+		}
+	}, [notifications]);
+
+	useEffect(() => {}, [unreadNotifications]);
+
 	return (
-		<li className='nav-item mx-0 mx-md-3'>
+		<li className='nav-item mx-0 mx-md-3' data-testid='nav-link-item'>
 			<NavLink
 				{...{
 					className: `nav-link${haspopup ? ' text-light' : ''}`,
@@ -34,14 +48,27 @@ const NavLinkItem = ({
 			>
 				{icon && icon !== ';)' ? (
 					<>
-						<i data-testid='fa-icon' className={`fa fa-${icon}`} />
+						<div data-testid='fa-icon' className={`fa fa-${icon}`}>
+							{unreadNotifications.length ? (
+								<span className='notification-number'>
+									{unreadNotifications.length}
+								</span>
+							) : (
+								<div data-testid='no-unread-notifications' />
+							)}
+						</div>
 						<span className='pl-2'>{linkText}</span>
 					</>
 				) : (
 					linkText
 				)}
 			</NavLink>
-			{haspopup && <Notifications />}
+			{haspopup && (
+				<Notifications
+					clearNotification={setUnreadNotifications}
+					notifications={unreadNotifications}
+				/>
+			)}
 		</li>
 	);
 };
@@ -51,20 +78,18 @@ NavLinkItem.propTypes = {
 	linkRoute: PropTypes.string,
 	icon: PropTypes.string,
 	haspopup: PropTypes.bool,
-	notifications: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: PropTypes.string.isRequired,
-			body: PropTypes.string.isRequired,
-			dateTime: PropTypes.string.isRequired,
-		}),
-	),
+	notifications: PropTypes.object,
 };
 
 NavLinkItem.defaultProps = {
 	linkRoute: '#',
 	haspopup: false,
 	icon: ';)',
-	notifications: [],
+	notifications: null,
 };
 
-export default NavLinkItem;
+export const mapStateToProps = ({ notificationState: { data } }) => ({
+	notifications: data,
+});
+
+export default connect(mapStateToProps)(NavLinkItem);

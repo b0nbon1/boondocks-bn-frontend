@@ -71,7 +71,7 @@ export default function App() {
 							exact
 							component={CreateRoomsPage}
 						/>
-						<Route
+						<ProtectedRoute
 							path='/request/:requestId'
 							exact
 							component={SingleRequestPage}
@@ -108,11 +108,6 @@ export default function App() {
 						<ProtectedRoute path='/users' component={UsersContainer} />
 						<Route path='/auth/reset-password' component={ResetPasswordPage} />
 						<Redirect exact from='/' to='home' />
-						<Route
-							path='/request/:requestId'
-							exact
-							component={SingleRequestPage}
-						/>
 						<Route component={NotFound} />
 					</Switch>
 				</div>

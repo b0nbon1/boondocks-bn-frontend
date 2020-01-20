@@ -17,12 +17,6 @@ export default (state = initialState, action) => {
 				data: action.payload,
 				status: 'success',
 			};
-		case MARK_AS_READ_SUCCESS:
-			return {
-				...state,
-				data: action.payload,
-				status: 'error',
-			};
 		default:
 			return {
 				...state,
