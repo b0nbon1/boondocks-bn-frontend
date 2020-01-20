@@ -76,12 +76,6 @@ export default function App() {
 							component={CreateRoomsPage}
 						/>
 						<ProtectedRoute
-							path='/booking/:hotelId'
-							exact
-							component={BookingContainer}
-							title='Booking'
-						/>
-						<Route
 							path='/request/:requestId'
 							exact
 							component={SingleRequestPage}
@@ -119,11 +113,6 @@ export default function App() {
 						<ProtectedRoute path='/users' component={UsersContainer} />
 						<Route path='/auth/reset-password' component={ResetPasswordPage} />
 						<Redirect exact from='/' to='home' />
-						<Route
-							path='/request/:requestId'
-							exact
-							component={SingleRequestPage}
-						/>
 						<Route component={NotFound} />
 					</Switch>
 				</div>
