@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { notification } from '../store/actions/notificationAction';
 import { formatToTime } from '../lib/time';
 import markAllNotificationsAsReadAction from '../store/actions/notifications/markAllNotificationsAsReadAction';
+import markOneNotificationAsReadAction from '../store/actions/notifications/markOneNotificationAsReadAction';
 
 export const evenNotificationClass = idx => (idx % 2 === 1 ? ' bg-gray' : '');
 
@@ -21,10 +22,18 @@ export class Notifications extends Component {
 	}
 
 	handleRedirect(id) {
-		const { history } = this.props;
+		const {
+			history,
+			markOneAsRead,
+			notifications,
+			clearNotification,
+		} = this.props;
+
+		const unreadNotifications = notifications.filter(notif => notif.id !== id);
+		clearNotification([...unreadNotifications]);
+
 		history.push(`/request/${id}`);
-		// return <Redirect to={`/request/${id}`} />
-		// window.location.replace(`/request/${id}`);
+		markOneAsRead(id);
 	}
 
 	render() {
@@ -69,7 +78,9 @@ export class Notifications extends Component {
 										data-testid='notification'
 										className={`notification-box${evenNotificationClass(idx)}`}
 										key={notificationItem.id}
-										onClick={() => this.handleRedirect(notificationItem.id)}
+										onClick={() =>
+											this.handleRedirect(notificationItem.requestId)
+										}
 									>
 										<div className='row'>
 											<div className='col-lg-12 col-sm-12 col-12'>
@@ -99,6 +110,7 @@ Notifications.propTypes = {
 	notifications: propTypes.arrayOf(propTypes.any).isRequired,
 	notification: propTypes.func.isRequired,
 	markAllAsRead: propTypes.func.isRequired,
+	markOneAsRead: propTypes.func.isRequired,
 	clearNotification: propTypes.func.isRequired,
 	history: propTypes.shape({
 		push: propTypes.func.isRequired,
@@ -108,6 +120,7 @@ Notifications.propTypes = {
 const mapDispatchToProps = {
 	notification,
 	markAllAsRead: markAllNotificationsAsReadAction,
+	markOneAsRead: markOneNotificationAsReadAction,
 };
 
 export default withRouter(connect(null, mapDispatchToProps)(Notifications));

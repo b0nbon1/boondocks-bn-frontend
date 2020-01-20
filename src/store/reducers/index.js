@@ -26,6 +26,7 @@ import deleteCommentReducer from './deleteCommentReducer';
 import bookingReducer from './bookingReducer';
 import notificationReducer from './notificationReducer';
 import markAllNotificationsAsReadReducer from './markAllNotificationsAsReadReducer';
+import updateNotificationReducer from './updateNotificationReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
@@ -55,6 +56,7 @@ const reducers = combineReducers({
 	notificationState: notificationReducer,
 	markAsReadState: notificationReducer,
 	markAllNotificationsAsReadState: markAllNotificationsAsReadReducer,
+	updateNotificationState: updateNotificationReducer,
 });
 
 export default reducers;

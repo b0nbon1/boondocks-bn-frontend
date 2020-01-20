@@ -76,6 +76,12 @@ export default function App() {
 							component={CreateRoomsPage}
 						/>
 						<ProtectedRoute
+							path='/booking/:hotelId'
+							exact
+							component={BookingContainer}
+							title='Booking'
+						/>
+						<Route
 							path='/request/:requestId'
 							exact
 							component={SingleRequestPage}
@@ -123,3 +129,4 @@ export default function App() {
 		</Provider>
 	);
 }
+

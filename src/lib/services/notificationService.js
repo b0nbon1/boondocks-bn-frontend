@@ -8,3 +8,7 @@ export const notificationView = async () => {
 export const markAllAsRead = async () => {
 	return apiCall.patch(`/markAsRead`, {}).catch(axiosErrorHandler);
 };
+
+export const markOneAsRead = async id => {
+	return apiCall.patch(`/markAsRead/${id}`, {}).catch(axiosErrorHandler);
+};

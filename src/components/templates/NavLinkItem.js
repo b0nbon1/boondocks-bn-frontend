@@ -7,20 +7,22 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { Notifications } from "../Notifications";
 import Notifications from '../Notifications';
 
-export const NavLinkItem = ({
+export const evenNotificationClass = idx => (idx % 2 === 1 ? ' bg-gray' : '');
+
+const NavLinkItem = ({
 	linkText,
 	linkRoute,
 	icon,
 	haspopup,
 	notifications,
+	newNotification,
 }) => {
 	const [unreadNotifications, setUnreadNotifications] = useState([]);
 
 	useEffect(() => {
-		if (notifications !== null) {
+		if (notifications && notifications.data) {
 			setUnreadNotifications(
 				notifications.data.filter(
 					notification => notification.isRead === false,
@@ -29,10 +31,24 @@ export const NavLinkItem = ({
 		}
 	}, [notifications]);
 
+	useEffect(() => {
+		if (newNotification && notifications) {
+			const findNotification = unreadNotifications.some(
+				el => el.id === newNotification.id,
+			);
+			if (!findNotification) {
+				setUnreadNotifications(prevNotifications => [
+					...prevNotifications,
+					newNotification,
+				]);
+			}
+		}
+	}, [newNotification]);
+
 	useEffect(() => {}, [unreadNotifications]);
 
 	return (
-		<li className='nav-item mx-0 mx-md-3' data-testid='nav-link-item'>
+		<li className='nav-item mx-0 mx-md-3'>
 			<NavLink
 				{...{
 					className: `nav-link${haspopup ? ' text-light' : ''}`,
@@ -49,12 +65,10 @@ export const NavLinkItem = ({
 				{icon && icon !== ';)' ? (
 					<>
 						<div data-testid='fa-icon' className={`fa fa-${icon}`}>
-							{unreadNotifications.length ? (
+							{!!unreadNotifications.length && (
 								<span className='notification-number'>
 									{unreadNotifications.length}
 								</span>
-							) : (
-								<div data-testid='no-unread-notifications' />
 							)}
 						</div>
 						<span className='pl-2'>{linkText}</span>
@@ -66,7 +80,7 @@ export const NavLinkItem = ({
 			{haspopup && (
 				<Notifications
 					clearNotification={setUnreadNotifications}
-					notifications={unreadNotifications}
+					notifications={unreadNotifications.reverse()}
 				/>
 			)}
 		</li>
@@ -78,7 +92,8 @@ NavLinkItem.propTypes = {
 	linkRoute: PropTypes.string,
 	icon: PropTypes.string,
 	haspopup: PropTypes.bool,
-	notifications: PropTypes.object,
+	notifications: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+	newNotification: PropTypes.object,
 };
 
 NavLinkItem.defaultProps = {
@@ -86,10 +101,13 @@ NavLinkItem.defaultProps = {
 	haspopup: false,
 	icon: ';)',
 	notifications: null,
+	newNotification: null,
 };
 
-export const mapStateToProps = ({ notificationState: { data } }) => ({
-	notifications: data,
+const mapStateToProps = state => ({
+	allAsReadState: state.markAllNotificationsAsReadState,
+	notifications: state.notificationState.data,
+	newNotification: state.updateNotificationState.newNotification,
 });
 
 export default connect(mapStateToProps)(NavLinkItem);

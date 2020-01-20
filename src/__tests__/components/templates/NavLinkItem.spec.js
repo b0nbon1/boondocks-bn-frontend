@@ -188,13 +188,13 @@ describe("NavLinkItem template component", () => {
 
   it("should display notification", () => {
     const { notificationState, ...rest } = initialState;
-    const { getByTestId } = render(
+    const { getByText } = render(
       <BrowserRouter>
         <Navbar/>
       </BrowserRouter>,
       { ...rest, notificationState: { data: null } }
     );
-    expect(getByTestId("no-unread-notifications")).toBeInTheDocument();
+    expect(getByText("No unread notifications")).toBeInTheDocument();
   });
 
   it("should display notification", async () => {

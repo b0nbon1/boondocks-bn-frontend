@@ -1,10 +1,7 @@
-import {
-	FETCH_NOTIFICATIONS_SUCCESS,
-	MARK_AS_READ_SUCCESS,
-} from '../actions/types';
+import { FETCH_NOTIFICATIONS_SUCCESS } from '../actions/types';
 
 const initialState = {
-	data: null,
+	data: [],
 	error: null,
 	status: '',
 };
