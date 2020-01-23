@@ -9,7 +9,7 @@ const Toast = (type, message) => {
 		case 'info':
 			return toast.info(message);
 		default:
-			return toast.error('Please pass a type on your toast');
+			return toast.error('Please pass a type on your notification');
 	}
 };
 

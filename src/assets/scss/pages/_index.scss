@@ -11,9 +11,8 @@
 @use '../components/table';
 @use '../components/card';
 @use '../components/cards';
-@use './requestPage';
 @use '../components/comments';
-
+@use './requestPage';
 
 body {
   color: $color-black-text;
@@ -27,6 +26,10 @@ button:disabled {
 .App {
   min-height: calc(100vh - .5rem);
   background-color: $color-whitesmoke;
+}
+
+.mt-7 {
+  margin-top: 7rem;
 }
 
 .mt-7 {
