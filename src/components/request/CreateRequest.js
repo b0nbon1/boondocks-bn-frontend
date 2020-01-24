@@ -16,6 +16,12 @@ import {
 	closePageLoadingSpinner,
 } from '../../store/actions/loadingActions';
 import toast from '../../lib/toast';
+import TravelProfile from '../profile/TravelProfile';
+import {
+	fetchUserProfile,
+	saveProfile,
+	updateProfile,
+} from '../../store/actions/profile/profileActions';
 
 export class CreateRequest extends Component {
 	constructor(props) {
@@ -44,6 +50,8 @@ export class CreateRequest extends Component {
 		const { props } = this;
 		props.renderPageLoadingSpinner();
 		await props.fetchCreateTripData();
+		const user = JSON.parse(localStorage.getItem('bn_user_data'));
+		props.fetchUserProfile(user.userId);
 		props.closePageLoadingSpinner();
 	}
 
@@ -402,7 +410,21 @@ export class CreateRequest extends Component {
 	handleFormSubmit(formSubmitEvent) {
 		formSubmitEvent.preventDefault();
 		const { state } = this;
+		const { props } = this;
 		const formsArray = state.allTrips;
+
+		const { profile, editErrors } = props;
+
+		let error;
+		Object.keys(editErrors).forEach(key => {
+			if (editErrors[key] !== null) {
+				error = 1;
+			}
+		});
+		if (error === 1) {
+			toast('error', 'Errors found, please review information');
+			return;
+		}
 
 		if (formsArray.length === 1) {
 			const thisFormState = formsArray[0];
@@ -417,7 +439,6 @@ export class CreateRequest extends Component {
 				reason,
 			} = thisFormState;
 
-			const { props } = this;
 			let endpoint;
 			let userRequest = {
 				type: tripType,
@@ -441,11 +462,11 @@ export class CreateRequest extends Component {
 					returnDate,
 				};
 				endpoint = '/trips/return';
-				props.createTrip(userRequest, endpoint);
+				props.createTrip(userRequest, endpoint, profile);
 				this.setState({ checkSubmit: true });
 			} else {
 				endpoint = '/trips/oneway';
-				props.createTrip(userRequest, endpoint);
+				props.createTrip(userRequest, endpoint, profile);
 				this.setState({ checkSubmit: true });
 			}
 		} else {
@@ -485,8 +506,8 @@ export class CreateRequest extends Component {
 				}
 				formRequestArray.push(userRequest);
 			});
-			const { props } = this;
-			props.createTrip(formRequestArray, '/trips/multi-city');
+
+			props.createTrip(formRequestArray, '/trips/multi-city', profile);
 			this.setState({ checkSubmit: true });
 		}
 	}
@@ -518,6 +539,7 @@ export class CreateRequest extends Component {
 
 		const { loadingData } = this.props;
 		const { buttonLoading } = loadingData;
+		const { props } = this;
 		return (
 			<div className='createTripContainer card mx-auto mb-2'>
 				<form
@@ -534,6 +556,15 @@ export class CreateRequest extends Component {
 						<span className='oi oi-plus' />
 						Add trip
 					</button>
+
+					<TravelProfile
+						profile={props.profile}
+						managers={props.managers}
+						saveData={props.updateProfile}
+						errors={props.editErrors}
+						isEditing={props.isEditing}
+					/>
+
 					<div className='form-group createTripBtn'>
 						<LoadingButton
 							data-test='submitInput'
@@ -556,6 +587,12 @@ CreateRequest.propTypes = {
 	loadingData: propTypes.objectOf(propTypes.any),
 	renderPageLoadingSpinner: propTypes.func,
 	closePageLoadingSpinner: propTypes.func,
+	fetchUserProfile: propTypes.func.isRequired,
+	profile: propTypes.instanceOf(Object).isRequired,
+	updateProfile: propTypes.func.isRequired,
+	editErrors: propTypes.instanceOf(Object).isRequired,
+	managers: propTypes.instanceOf(Array).isRequired,
+	isEditing: propTypes.bool.isRequired,
 };
 
 CreateRequest.defaultProps = {
@@ -570,6 +607,12 @@ CreateRequest.defaultProps = {
 export const mapStateToProps = state => ({
 	loadingData: state.loadingState,
 	createTripData: state.createTripState,
+	profile: state.profileState.userProfile,
+	currentUserId: state.profileState.currentUserId,
+	loggedIn: state.loginState.loggedIn,
+	managers: state.profileState.managers,
+	editErrors: state.profileState.errors,
+	isEditing: state.profileState.isEditing,
 });
 
 const mapDispatchToProps = {
@@ -577,6 +620,9 @@ const mapDispatchToProps = {
 	createTrip,
 	renderPageLoadingSpinner,
 	closePageLoadingSpinner,
+	fetchUserProfile,
+	updateProfile,
+	saveUserInfo: saveProfile,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateRequest);

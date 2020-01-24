@@ -117,7 +117,7 @@ class EditProfile extends Component {
 
 						<SelectInput
 							name='lineManager'
-							value={state.lineManager || profile.lineManager.id || ''}
+							value={state.lineManager || profile.lineManager.id || profile.lineManager || ''}
 							label='Line Manager'
 							selected={state.gender || ''}
 							placeholder='Line Manager'
@@ -194,7 +194,6 @@ EditProfile.propTypes = {
 	saveProfile: PropTypes.func.isRequired,
 	loading: PropTypes.bool,
 	revertChanges: PropTypes.func.isRequired,
-	setIsEditing: PropTypes.func.isRequired,
 	isEditing: PropTypes.bool.isRequired,
 };
 

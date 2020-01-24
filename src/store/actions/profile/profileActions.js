@@ -109,6 +109,10 @@ const updateProfile = input => async dispatch => {
 			validate: isValidId,
 			errorMessage: 'Line Manager must be a number',
 		},
+		rememberInfo: {
+			validate: () => true,
+			errorMessage: '',
+		},
 	};
 	const name = Object.keys(input)[0];
 	let errorMessage = null;
@@ -116,20 +120,24 @@ const updateProfile = input => async dispatch => {
 	if (!schema[name].validate(input[name])) {
 		errorMessage = schema[name].errorMessage;
 	}
-	input[name] = input[name].trim();
+
+	input[name] =
+		typeof input[name] !== 'string' ? input[name] : input[name].trim();
+
 	const errorKey = `${name}Error`;
 	error[errorKey] = errorMessage;
 	dispatch(actionFunc(ACTION_TYPES.UPDATE_PROFILE, { input, error }));
 	dispatch(actionFunc(ACTION_TYPES.SET_EDIT_MODE, true));
 };
 
-/**
- * Update Profile and dispatch success action on success
- * @returns {function(...[*]=)}
- */
-const saveProfile = userProfile => async dispatch => {
+export const transformProfile = (userProfile, dispatch) => {
 	userProfile.lineManagerId =
 		userProfile.lineManager.id || userProfile.lineManager;
+	userProfile.remember =
+		userProfile.rememberInfo === undefined
+			? userProfile.remember
+			: userProfile.rememberInfo;
+
 	delete userProfile.isVerified;
 	delete userProfile.role;
 	delete userProfile.lastLogin;
@@ -145,7 +153,7 @@ const saveProfile = userProfile => async dispatch => {
 		Toast('error', error.lineManagerError);
 		dispatch(actionFunc(BUTTON_LOADING, false));
 		dispatch(actionFunc(ACTION_TYPES.SET_EDIT_MODE, true));
-		return;
+		return false;
 	}
 
 	const notAllowed = ['', ' ', null, 'none', undefined];
@@ -159,9 +167,22 @@ const saveProfile = userProfile => async dispatch => {
 		...filteredFields.map(key => ({ [key]: userProfile[key] })),
 	);
 
-	dispatch(actionFunc(BUTTON_LOADING, true));
 	delete validInformation.lineManager;
-	await updateUserProfile(validInformation);
+
+	const { rememberInfo, ...profile } = validInformation;
+	return profile;
+};
+
+/**
+ * Update Profile and dispatch success action on success
+ * @returns {function(...[*]=)}
+ */
+const saveProfile = userProfile => async dispatch => {
+	const profile = transformProfile(userProfile, dispatch);
+	console.log(profile);
+	dispatch(actionFunc(BUTTON_LOADING, true));
+
+	await updateUserProfile(profile);
 
 	const { userId } = JSON.parse(localStorage.getItem('bn_user_data'));
 	const profileData = await getUserProfile(userId);
