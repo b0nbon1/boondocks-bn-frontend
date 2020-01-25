@@ -41,7 +41,7 @@ export const NavbarNav = ({ navItems, isAuthenticated, notifications }) => {
 						data-testid='other-links'
 						className='navbar-nav ml-auto py-4 py-md-0'
 					>
-						<NavLinkItem linkText='Public chat' icon='comments' />
+						{/* <NavLinkItem linkText='Public chat' icon='comments' /> */}
 						<NavLinkItem
 							linkText='&nbsp;'
 							icon='bell'

@@ -29,6 +29,7 @@ import CreateRoomsPage from './views/accomodations/CreateRoomsPage';
 import SingleHotelPage from './views/accomodations/SingleHotelPage';
 import EditRequest from './components/request/EditRequest';
 import CreateRequestPage from './views/requests/CreateRequestPage';
+import ChatView from './views/ChatView';
 
 export default function App() {
 	return (
@@ -42,6 +43,7 @@ export default function App() {
 						<Route path='/register' exact component={RegisterPage} />
 						<Route path='/login' exact component={LoginPage} />
 						<Route path='/edit-request' exact component={EditRequest} />
+						{/* <Route path='/chat' exact component={Chat} /> */}
 						<ProtectedRoute
 							path='/profile/:userId'
 							component={ViewProfileContainer}
@@ -117,6 +119,7 @@ export default function App() {
 					</Switch>
 				</div>
 				<ToastContainer />
+				<ChatView />
 				<Footer />
 			</Router>
 		</Provider>

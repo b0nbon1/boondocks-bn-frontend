@@ -22,4 +22,6 @@ const decodeToken = token => {
 	);
 };
 
-export { storeToken, decodeToken };
+const getToken = () => cookies.get('bn_auth_token');
+
+export { storeToken, decodeToken, getToken };
