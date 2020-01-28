@@ -18,11 +18,16 @@ import moment from 'moment';
 import { bookAccommodation } from '../../lib/services/booking.service';
 import { createMemoryHistory } from 'history';
 import MockDate from 'mockdate';
+import {
+	getBookingData,
+	getUserRatingData,
+} from '../../lib/services/rating.service';
 
 global.localStorage = localStorage;
 jest.mock('universal-cookie', () => jest.fn());
 jest.mock('../../lib/services/accommodation.service');
 jest.mock('../../lib/services/booking.service');
+jest.mock('../../lib/services/rating.service');
 
 Cookies.mockImplementation(() => ({ get: () => token }));
 
@@ -134,10 +139,81 @@ const bookResponse = {
 	},
 };
 
+const bookingDataResponse = {
+	data: {
+		status: 'success',
+		message: 'Bookings retrieved successfully',
+		data: [
+			{
+				id: 18,
+				roomId: 6,
+				roomStatus: 'reserved',
+				firstName: 'Requester',
+				lastName: 'User',
+				arrivalDate: '2020-02-03T00:00:00.000Z',
+				leavingDate: '2020-02-07T00:00:00.000Z',
+				createdAt: '2020-01-31T08:30:21.576Z',
+				hotel: 'Marriot Hotel',
+				room: 'Cheetah',
+				hotelId: 1,
+			},
+			{
+				id: 15,
+				roomId: 10,
+				roomStatus: 'reserved',
+				firstName: 'Requester',
+				lastName: 'User',
+				arrivalDate: '2020-01-30T00:00:00.000Z',
+				leavingDate: '2020-01-31T00:00:00.000Z',
+				createdAt: '2020-01-30T13:07:17.918Z',
+				hotel: 'Best Western Hotel',
+				room: 'Rain',
+				hotelId: 2,
+			},
+		],
+	},
+};
+
+const ratingDataResponse = {
+	data: {
+		status: 'success',
+		message: 'Hotel ratings fetched successfully',
+		data: [
+			{
+				id: 18,
+				hotelId: 4,
+				userId: 2,
+				rating: 4,
+				createdAt: '2020-01-30T13:29:53.571Z',
+				updatedAt: '2020-01-30T13:30:01.477Z',
+			},
+			{
+				id: 17,
+				hotelId: 2,
+				userId: 2,
+				rating: 4,
+				createdAt: '2020-01-30T13:13:53.368Z',
+				updatedAt: '2020-01-31T07:39:11.490Z',
+			},
+			{
+				id: 20,
+				hotelId: 1,
+				userId: 2,
+				rating: 4,
+				createdAt: '2020-01-31T08:30:51.807Z',
+				updatedAt: '2020-01-31T08:31:18.034Z',
+			},
+		],
+	},
+};
+
 describe('Booking page', () => {
 
 	test("User can view booking page ", async () => {
-		getHotelById.mockImplementation(() => Promise.resolve(hotel));
+    getHotelById.mockImplementation(() => Promise.resolve(hotel));
+    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
+    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
+    
 		const { getByText, getAllByText } = render(
 			<BrowserRouter>
 				<BookingContainer match={{params : {hotelId:2}}}/>
@@ -152,7 +228,7 @@ describe('Booking page', () => {
 
 	test("User can book an accommodation", async () => {
 		getHotelById.mockImplementation(() => Promise.resolve(hotel));
-		bookAccommodation.mockImplementation(() => Promise.resolve(bookResponse));
+    bookAccommodation.mockImplementation(() => Promise.resolve(bookResponse));
 
 		const history = createMemoryHistory();
 		const { getByTestId, getByPlaceholderText, getAllByTestId, getByText, queryByText } = render(

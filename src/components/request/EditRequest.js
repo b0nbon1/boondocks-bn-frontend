@@ -148,7 +148,6 @@ export class EditRequest extends Component {
 				props.request.data.id,
 			);
 			window.$(`#ModalCenter-${props.id}`).modal('hide');
-			this.forceUpdate();
 		}
 	}
 

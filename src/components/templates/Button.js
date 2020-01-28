@@ -31,7 +31,6 @@ const LoadingButton = ({
 			className={`form-group ${classNames}`}
 			type='submit'
 			onClick={onClick}
-			data-testid={testId}
 			hidden={hidden}
 		>
 			{value}
