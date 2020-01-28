@@ -1,4 +1,7 @@
 import Toast from '../toast';
+import store from '../../store';
+import actionFunc from '../../utils/actionFunc';
+import { BUTTON_LOADING } from '../../store/actions/types';
 
 const axiosErrorHandler = error => {
 	if (error.response) {
@@ -6,14 +9,21 @@ const axiosErrorHandler = error => {
 			error.response.data.message.map(message => {
 				Toast('error', message);
 			});
-			return;
+			store.dispatch(actionFunc(BUTTON_LOADING, false));
+			return Promise.reject(error);
 		}
+		store.dispatch(actionFunc(BUTTON_LOADING, false));
 		Toast('error', error.response.data.message);
-	} else if (error.request) {
-		Toast('error', 'Service Unreachable, check you internet connection');
-	} else {
-		Toast('error', 'Something went wrong');
+		return Promise.reject(error);
 	}
+
+	if (error.request) {
+		store.dispatch(actionFunc(BUTTON_LOADING, false));
+		Toast('error', 'Service Unreachable, check you internet connection');
+		return Promise.reject(error);
+	}
+	store.dispatch(actionFunc(BUTTON_LOADING, false));
+	Toast('error', 'Something went wrong');
 	return Promise.reject(error);
 };
 

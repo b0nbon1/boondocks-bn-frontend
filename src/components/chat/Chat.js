@@ -6,14 +6,14 @@ function Chat() {
 	const { messages, sendMessage, getPriorMessages } = useChat();
 	const messagesEndRef = useRef(null);
 	const [newMessage, setMessage] = useState('');
-	const [showChat, setshowChat] = useState(false);
+	const [showChat, setShowChat] = useState(false);
 	const scrollToBottom = () => {
 		const el = window.$('#chat');
 		const height = el[0].scrollHeight;
 		el.scrollTop(height);
 	};
 	const toggle = () => {
-		setshowChat(!showChat);
+		setShowChat(!showChat);
 		scrollToBottom();
 	};
 	const { userId, name } = JSON.parse(localStorage.bn_user_data);

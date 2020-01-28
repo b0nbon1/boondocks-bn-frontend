@@ -1,6 +1,7 @@
 @use "../utilities/variables";
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic&subset=latin,cyrillic);
 
+
 .chat.hide {
   opacity: 0;
   transform: scale(0);
@@ -71,7 +72,7 @@ button {
  margin: 1em;
  right: 0;
  z-index: 998;
- 
+
 }
 
 .fab {
@@ -365,7 +366,7 @@ button {
 
 @-webkit-keyframes ripple {
  /*scale the element to 250% to safely cover the entire link and fade it out*/
- 
+
  100% {
    opacity: 0;
    -moz-transform: scale(5);
@@ -378,7 +379,7 @@ button {
 
 @keyframes ripple {
  /*scale the element to 250% to safely cover the entire link and fade it out*/
- 
+
  100% {
    opacity: 0;
    -moz-transform: scale(5);

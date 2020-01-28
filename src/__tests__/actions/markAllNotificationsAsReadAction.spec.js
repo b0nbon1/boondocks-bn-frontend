@@ -20,13 +20,15 @@ describe("\"markAllNotificationsAsReadAction\" - WITHOUT ANY TOKEN", () => {
 
   afterEach(() => moxios.uninstall(apiCall));
 
-  it("should dispatch error when no token is present", async () => {
+  it("should dispatch error when no token is present 2", async () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
-      request.respondWith({
+      request.reject({
         response: {
-          status: "error",
-          message: "unable to fetch"
+          data: {
+            status: "error",
+            message: "unable to fetch",
+          }
         },
         status: 400
       });

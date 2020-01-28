@@ -70,7 +70,7 @@ export default function Hotel({ data }) {
 	const isAuthenticated = JSON.parse(localStorage.bn_user_data).verified;
 
 	return (
-		<div className='card' data-testid='card-hotel'>
+		<div className='card hotel' data-testid='card-hotel'>
 			<div className='embed-responsive embed-responsive-21by9'>
 				<img
 					className='card-img-top img-fluid embed-responsive-item'
@@ -167,6 +167,7 @@ export default function Hotel({ data }) {
 					</div>
 				</div>
 			</div>
+
 		</div>
 	);
 }

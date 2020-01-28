@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import profile from './profileReducer';
 import signupReducer from './authReducers';
 import loadingReducer from './loadingReducer';
-import resetPassordReducer from './resetPasswordReducer';
+import resetPasswordReducer from './resetPasswordReducer';
 import loginReducer from './loginReducer';
 import isAuthenticatedReducer from './isAuthenticatedReducer';
 import errorReducer from './errorHandlerReducer';
@@ -13,7 +13,7 @@ import singleRequestReducer from './singleRequestReducer';
 import usersReducer from './usersReducer';
 import navbarReducer from './navbarReducer';
 import createHotelReducer from './createHotelReducer';
-import getAccomodationReducers from './getAccomodationReducers';
+import getAccommodationReducers from './getAccomodationReducers';
 import getSingleHotelReducer from './getSingleHotelReducer';
 import createRoomsReducer from './createRoomsReducer';
 // eslint-disable-next-line import/named
@@ -29,11 +29,12 @@ import markAllNotificationsAsReadReducer from './markAllNotificationsAsReadReduc
 import updateNotificationReducer from './updateNotificationReducer';
 import tripStatsReducer from './tripStatsReducer';
 import rateAccomodationReducer from './rateAccomodationReducer';
+import feedbackReducer from './feedbackReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
-	resetState: resetPassordReducer,
-	forgotState: resetPassordReducer,
+	resetState: resetPasswordReducer,
+	forgotState: resetPasswordReducer,
 	loadingState: loadingReducer,
 	loginState: loginReducer,
 	profileState: profile,
@@ -46,7 +47,7 @@ const reducers = combineReducers({
 	navbarState: navbarReducer,
 	createHotelState: createHotelReducer,
 	createRoomState: createRoomsReducer,
-	hotelState: getAccomodationReducers,
+	hotelState: getAccommodationReducers,
 	singleHotelState: getSingleHotelReducer,
 	requestSearchState: requestSearchReducer,
 	isSearchingState: isSearching,
@@ -62,6 +63,7 @@ const reducers = combineReducers({
 	updateNotificationState: updateNotificationReducer,
 	tripStatState: tripStatsReducer,
 	rateAccomodationState: rateAccomodationReducer,
+	feedbackState: feedbackReducer,
 });
 
 export default reducers;
