@@ -30,6 +30,8 @@ import SingleHotelPage from './views/accomodations/SingleHotelPage';
 import EditRequest from './components/request/EditRequest';
 import CreateRequestPage from './views/requests/CreateRequestPage';
 import ChatView from './views/ChatView';
+import BookingContainer from './components/BookingContainer';
+import ViewBooking from './components/ViewBookingContainer';
 
 export default function App() {
 	return (
@@ -73,6 +75,12 @@ export default function App() {
 							exact
 							component={CreateRoomsPage}
 						/>
+						<ProtectedRoute
+							path='/booking/:hotelId'
+							exact
+							component={BookingContainer}
+							title='Booking'
+						/>
 						<Route
 							path='/request/:requestId'
 							exact
@@ -107,6 +115,7 @@ export default function App() {
 							component={ViewProfileContainer}
 						/>
 						<ProtectedRoute path='/requests' exact component={RequestPage} />
+						<ProtectedRoute path='/booking' exact component={ViewBooking}/>
 						<ProtectedRoute path='/users' component={UsersContainer} />
 						<Route path='/auth/reset-password' component={ResetPasswordPage} />
 						<Redirect exact from='/' to='home' />
