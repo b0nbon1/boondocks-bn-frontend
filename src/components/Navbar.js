@@ -44,8 +44,13 @@ export default connect(mapStateToProps, {
 })(Navbar);
 
 Navbar.propTypes = {
-	notifications: PropTypes.instanceOf(Array).isRequired,
+	notifications: PropTypes.instanceOf(Array),
+	// notifications: PropTypes.instanceOf(Array).isRequired,
 	isAuthenticated: PropTypes.bool.isRequired,
 	navItems: PropTypes.instanceOf(Array).isRequired,
 	updateNavbar: PropTypes.func.isRequired,
+};
+
+Navbar.defaultProps = {
+	notifications: [],
 };

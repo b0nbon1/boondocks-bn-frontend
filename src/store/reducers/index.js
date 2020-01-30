@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { combineReducers } from 'redux';
 import profile from './profileReducer';
 import signupReducer from './authReducers';
@@ -23,6 +24,9 @@ import createTripReducer from './createTripReducer';
 import editRequestReducer from './editRequestReducer';
 import deleteCommentReducer from './deleteCommentReducer';
 import bookingReducer from './bookingReducer';
+import notificationReducer from './notificationReducer';
+import markAllNotificationsAsReadReducer from './markAllNotificationsAsReadReducer';
+import updateNotificationReducer from './updateNotificationReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
@@ -49,6 +53,10 @@ const reducers = combineReducers({
 	updateTripState: editRequestReducer,
 	deleteCommentState: deleteCommentReducer,
 	bookingState: bookingReducer,
+	notificationState: notificationReducer,
+	markAsReadState: notificationReducer,
+	markAllNotificationsAsReadState: markAllNotificationsAsReadReducer,
+	updateNotificationState: updateNotificationReducer,
 });
 
 export default reducers;

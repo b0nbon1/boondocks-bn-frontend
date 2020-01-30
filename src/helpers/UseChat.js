@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import socketClient from 'socket.io-client';
 import Toast from '../lib/toast';
 import { getToken } from './authHelper';
 
+import { getNewNotification } from '../store/actions/notificationAction';
+
 const useChat = () => {
 	const [messages, setMessages] = useState([]);
 	const socketRef = useRef();
+	const dispatch = useDispatch();
 	useEffect(() => {
 		const token = getToken();
 		socketRef.current = socketClient(process.env.API_URL, {
@@ -27,6 +31,26 @@ const useChat = () => {
 
 		socketRef.current.on('authentication_error', error => {
 			Toast('error', error);
+		});
+
+		socketRef.current.on('new_comment', data => {
+			dispatch(getNewNotification(data));
+			Toast('success', data.messages);
+		});
+
+		socketRef.current.on('new_request', data => {
+			dispatch(getNewNotification(data));
+			Toast('success', data.messages);
+		});
+
+		socketRef.current.on('request_approved_or_rejected', data => {
+			dispatch(getNewNotification(data));
+			Toast('success', data.messages);
+		});
+
+		socketRef.current.on('edited_request', data => {
+			dispatch(getNewNotification(data));
+			Toast('success', data.messages);
 		});
 
 		return () => {

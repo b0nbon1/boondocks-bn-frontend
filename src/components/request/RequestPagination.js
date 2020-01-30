@@ -56,7 +56,7 @@ export const RequestPagination = ({
 		allRequests: [],
 		currentRequests: [],
 		currentPage: null,
-		totalPages: null,
+		totalPages: null
 	});
 
 	React.useEffect(() => {

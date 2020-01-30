@@ -3,9 +3,11 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Notifications from '../Notifications';
 
 export const evenNotificationClass = idx => (idx % 2 === 1 ? ' bg-gray' : '');
 
@@ -15,7 +17,36 @@ const NavLinkItem = ({
 	icon,
 	haspopup,
 	notifications,
+	newNotification,
 }) => {
+	const [unreadNotifications, setUnreadNotifications] = useState([]);
+
+	useEffect(() => {
+		if (notifications && notifications.data) {
+			setUnreadNotifications(
+				notifications.data.filter(
+					notification => notification.isRead === false,
+				),
+			);
+		}
+	}, [notifications]);
+
+	useEffect(() => {
+		if (newNotification && notifications) {
+			const findNotification = unreadNotifications.some(
+				el => el.id === newNotification.id,
+			);
+			if (!findNotification) {
+				setUnreadNotifications(prevNotifications => [
+					...prevNotifications,
+					newNotification,
+				]);
+			}
+		}
+	}, [newNotification]);
+
+	useEffect(() => {}, [unreadNotifications]);
+
 	return (
 		<li className='nav-item mx-0 mx-md-3'>
 			<NavLink
@@ -33,7 +64,13 @@ const NavLinkItem = ({
 			>
 				{icon && icon !== ';)' ? (
 					<>
-						<i data-testid='fa-icon' className={`fa fa-${icon}`} />
+						<div data-testid='fa-icon' className={`fa fa-${icon}`}>
+							{!!unreadNotifications.length && (
+								<span className='notification-number'>
+									{unreadNotifications.length}
+								</span>
+							)}
+						</div>
 						<span className='pl-2'>{linkText}</span>
 					</>
 				) : (
@@ -41,40 +78,10 @@ const NavLinkItem = ({
 				)}
 			</NavLink>
 			{haspopup && (
-				<ul className='dropdown-menu notification'>
-					<li className='notification-header'>
-						<div className='row'>
-							<div className='text-light col-lg-12 col-sm-12 col-12'>
-								<span>Notifications ({notifications.length})</span>
-								<a href='/' className='float-right text-light'>
-									Mark all as read
-								</a>
-							</div>
-						</div>
-					</li>
-					{notifications.map(({ title, body, dateTime, link }, idx) => (
-						<li
-							data-testid='notification'
-							className={`notification-box${evenNotificationClass(idx)}`}
-							key={idx}
-						>
-							<div className='row'>
-								<div className='col-lg-12 col-sm-12 col-12'>
-									<Link to={link}>
-										<strong className='text-primary'>{title}</strong>
-									</Link>
-									<div>{body}</div>
-									<small className='text-warning'>{dateTime}</small>
-								</div>
-							</div>
-						</li>
-					))}
-					<li className='notification-footer text-center'>
-						<a href='/' className='text-light'>
-							View All
-						</a>
-					</li>
-				</ul>
+				<Notifications
+					clearNotification={setUnreadNotifications}
+					notifications={unreadNotifications.reverse()}
+				/>
 			)}
 		</li>
 	);
@@ -85,20 +92,22 @@ NavLinkItem.propTypes = {
 	linkRoute: PropTypes.string,
 	icon: PropTypes.string,
 	haspopup: PropTypes.bool,
-	notifications: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: PropTypes.string.isRequired,
-			body: PropTypes.string.isRequired,
-			dateTime: PropTypes.string.isRequired,
-		}),
-	),
+	notifications: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+	newNotification: PropTypes.object,
 };
 
 NavLinkItem.defaultProps = {
 	linkRoute: '#',
 	haspopup: false,
 	icon: ';)',
-	notifications: [],
+	notifications: null,
+	newNotification: null,
 };
 
-export default NavLinkItem;
+const mapStateToProps = state => ({
+	allAsReadState: state.markAllNotificationsAsReadState,
+	notifications: state.notificationState.data,
+	newNotification: state.updateNotificationState.newNotification,
+});
+
+export default connect(mapStateToProps)(NavLinkItem);

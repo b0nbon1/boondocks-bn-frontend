@@ -44,7 +44,7 @@ export const NavbarNav = ({ navItems, isAuthenticated, notifications }) => {
 						{/* <NavLinkItem linkText='Public chat' icon='comments' /> */}
 						<NavLinkItem
 							linkText='&nbsp;'
-							icon='bell'
+							icon='bell-o bell-icon small-icon'
 							haspopup
 							notifications={notifications}
 						/>

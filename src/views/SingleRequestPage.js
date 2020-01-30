@@ -6,12 +6,18 @@ import SingleRequest from '../components/request/SingleRequest';
 import CommentRequest from '../components/request/CommentRequest';
 
 function SingleRequestPage(props) {
-	const { loading, status, data, match, btnLoading } = props;
+	const {
+		data,
+		match: {
+			params: { requestId },
+		},
+		btnLoading,
+	} = props;
 	useEffect(() => {
-		props.singleRequest(match.params.requestId);
-	}, []);
+		props.singleRequest(requestId);
+	}, [requestId]);
 
-	if (!loading && status === 'success') {
+	if (data && data.data) {
 		const request = data.data;
 		return (
 			<div className='container request'>
@@ -22,7 +28,7 @@ function SingleRequestPage(props) {
 						</div>
 						<div className='column-1 p-5'>
 							<CommentRequest
-								requestId={match.params.requestId}
+								requestId={requestId}
 								comment={request.comments}
 							/>
 						</div>
@@ -36,8 +42,6 @@ function SingleRequestPage(props) {
 
 SingleRequestPage.propTypes = {
 	data: PropTypes.objectOf(PropTypes.any),
-	status: PropTypes.string,
-	loading: PropTypes.bool,
 	btnLoading: PropTypes.bool,
 	singleRequest: PropTypes.func.isRequired,
 	match: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -45,16 +49,12 @@ SingleRequestPage.propTypes = {
 
 SingleRequestPage.defaultProps = {
 	data: null,
-	status: '',
-	loading: null,
 	btnLoading: null,
 };
 
 export const mapStateToProps = state => ({
 	data: state.singleRequestState.data,
-	loading: state.loadingState.loading,
 	btnLoading: state.loadingState.buttonLoading,
-	status: state.singleRequestState.status,
 	request: state.singleRequestState.request,
 });
 
