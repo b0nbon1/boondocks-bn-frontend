@@ -20,7 +20,7 @@ export const SingleHotelPage = ({ getHotel, match, data, loading, status }) => {
 				<h2 className='text-dark'>Rooms</h2>
 				<div className='ml-2 card-deck'>
 					{data.rooms.map(room => {
-							return <Room key={room.id} data={room} />;
+						return <Room key={room.id} data={room} />;
 					})}
 				</div>
 			</div>

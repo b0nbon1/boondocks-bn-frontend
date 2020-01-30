@@ -17,12 +17,15 @@ import Cookies from "universal-cookie";
 import CreateRequestPage from '../../../views/requests/CreateRequestPage';
 import { BrowserRouter } from "react-router-dom";
 import { getLocationsWithHotels, getLocations, createATrip } from "../../../lib/services/createRequest.service";
+import { getUserProfile, getUsers } from '../../../lib/services/user.service';
 
 global.localStorage = localStorage;
 
 
-jest.mock("universal-cookie", () => jest.fn());
+jest.mock("universal-cookie");
 jest.mock("../../../lib/services/createRequest.service");
+jest.mock("../../../lib/services/user.service");
+
 jest.mock("react-select", () => ({ options, value, onChange }) => {
   function handleChange(event) {
     const option = options.find(
@@ -231,18 +234,82 @@ describe(' ', () => {
     localStorage.store = {};
    });
 
+	const userProfile = {
+		data: {
+			data: {
+				firstName: "Requester",
+				lastName: "User",
+				email: "requester@user.com",
+				isVerified: true,
+				birthDate: "2001-11-11T00:00:00.000Z",
+				residenceAddress: '',
+				preferredLanguage: "French USA",
+				preferredCurrency: "usd",
+				department: "marketing",
+				gender: "male",
+				lastLogin: "2020-01-04T08:19:43.909Z",
+				role: "requester",
+				phoneNumber: "0786466253",
+				lineManager: {
+					id: 7,
+					firstName: "john",
+					lastName: "doe",
+				},
+			}
+		}
+	};
+
+	const managers = {
+		data: {
+			data: [
+				{
+					id: 1,
+					firstName: "john",
+					lastName: "doe",
+					email: "john@barefoot.com",
+					birthDate: '2001-11-11T00:00:00.000Z',
+					residenceAddress: '',
+					lineManagerId: '',
+					preferredLanguage: '',
+					preferredCurrency: '',
+					department: '',
+					gender: '',
+					role: "manager",
+					phoneNumber: '',
+					createdAt: "2019-12-11T18:15:54.157Z",
+					updatedAt: "2019-12-12T11:05:52.591Z"
+				}
+			]
+		}
+	};
+
+	const initialState = {
+		profileState: {
+			userProfile: {},
+			errors: {},
+			managers: [],
+			initialProfile: {},
+			isFetching: false,
+			fetchError: null,
+			isEditing: true,
+			currentUserId: null
+		}
+	};
+
   test('User can create a one way trip', async () => {
     getLocations.mockImplementation(() => Promise.resolve(locations));
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
     createATrip.mockImplementation(() => Promise.resolve(responseData));
-  
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+		getUsers.mockImplementation(() => Promise.resolve(managers));
+
     const initialState = {
       authState: {
         isAuthenticated: true
       }
     };
-    const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-  
+    const { getByTestId, getByPlaceholderText } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+
     const [
       oneWayTypeField,
       travelDateField,
@@ -251,6 +318,13 @@ describe(' ', () => {
       selectHotelField,
       selectRoomField,
       reasonField,
+			departmentField,
+			firstNameField,
+			managerField,
+			genderField,
+			currencyField,
+			languageField,
+			rememberInfo,
       submitButton
     ] = await waitForElement(() => [
       getByTestId('oneway'),
@@ -260,9 +334,16 @@ describe(' ', () => {
       getByTestId('hotel'),
       getByTestId('room'),
       getByTestId('reason'),
+			getByPlaceholderText('Enter Department'),
+			getByPlaceholderText('Enter First Name'),
+			getByPlaceholderText('Line Manager'),
+			getByPlaceholderText('Select Gender'),
+			getByPlaceholderText('Preferred Currency'),
+			getByPlaceholderText('Preferred Language'),
+      getByTestId('remember'),
       getByTestId('submitInput'),
     ]);
-  
+
     fireEvent.click(oneWayTypeField);
     fireEvent.change(travelDateField, {target:{value: '2021-01-31'}});
     fireEvent.change(leavingFromField, {target:{value: 1}});
@@ -270,22 +351,52 @@ describe(' ', () => {
     fireEvent.change(selectHotelField, {target:{value: 1}});
     fireEvent.change(selectRoomField, {target:{value: 9}});
     fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
+
+		fireEvent.change(firstNameField, { target: { value: ''}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+
+		fireEvent.change(genderField, { target: { value: 'male'}});
+		fireEvent.blur(genderField);
+
+		fireEvent.change(currencyField, { target: { value: 'Dollars'}});
+		fireEvent.blur(currencyField);
+
+		fireEvent.change(languageField, { target: { value: 'English'}});
+		fireEvent.blur(languageField);
+
+		fireEvent.change(managerField, { target: { value: 'none'}});
+		fireEvent.blur(managerField);
+
+		fireEvent.change(managerField, { target: { value: 1 }});
+		fireEvent.blur(managerField);
+
+		fireEvent.click(rememberInfo)
+
     fireEvent.click(submitButton);
-  
+
   });
-  
+
   test('User can create a return trip', async () => {
     getLocations.mockImplementation(() => Promise.resolve(locations));
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
     createATrip.mockImplementation(() => Promise.resolve(responseData));
-  
-    const initialState = {
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+		getUsers.mockImplementation(() => Promise.resolve(managers));
+
+
+		const initialState = {
       authState: {
         isAuthenticated: true
       }
     };
     const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-  
+
     const [
       returnTypeField,
       travelDateField,
@@ -307,7 +418,7 @@ describe(' ', () => {
       getByTestId('reason'),
       getByTestId('submitInput'),
     ]);
-  
+
     fireEvent.click(returnTypeField);
     fireEvent.change(returnDateField, {target:{value: '2021-03-31'}});
     fireEvent.change(travelDateField, {target:{value: '2021-01-31'}});
@@ -317,22 +428,25 @@ describe(' ', () => {
     fireEvent.change(selectRoomField, {target:{value: 9}});
     fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
     fireEvent.click(submitButton);
-  
+
   });
-  
-  
+
+
   test('User can create a multi-city trip', async () => {
     getLocations.mockImplementation(() => Promise.resolve(locations));
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
     createATrip.mockImplementation(() => Promise.resolve(responseData));
-  
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+		getUsers.mockImplementation(() => Promise.resolve(managers));
+
+
     const initialState = {
       authState: {
         isAuthenticated: true
       }
     };
     const { getByTestId ,getAllByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-  
+
     const [
       returnTypeField,
       travelDateField,
@@ -357,11 +471,11 @@ describe(' ', () => {
       getByTestId('submitInput'),
       getByTestId('addbutton'),
     ]);
-  
-    
+
+
     fireEvent.click(addTripButton);
     fireEvent.click(addTripButton);
-  
+
     const [
       returnTypeField1,
       travelDateField1,
@@ -385,8 +499,8 @@ describe(' ', () => {
       getByTestId('addbutton'),
       getAllByTestId('oneway'),
     ]);
-  
-    
+
+
     fireEvent.click(returnTypeField[0]);
     fireEvent.change(returnDateField[0], {target:{value: '2021-03-31'}});
     fireEvent.change(travelDateField[0], {target:{value: '2021-01-31'}});
@@ -395,48 +509,50 @@ describe(' ', () => {
     fireEvent.change(selectHotelField[0], {target:{value: 1}});
     fireEvent.change(selectRoomField[0], {target:{value: 9}});
     fireEvent.change(reasonField[0], {target:{value: 'Reason for the trip goes here'}});
-  
+
     fireEvent.click(oneWayTypeField1[1]);
     fireEvent.change(travelDateField1[1], {target:{value: '2021-01-31'}});
     fireEvent.change(leavingFromField1[1], {target:{value: 1}});
     fireEvent.change(goingToField1[1], {target:{value: 7}});
     fireEvent.change(reasonField1[1], {target:{value: 'Reason for the trip goes here'}});
-  
+
     fireEvent.click(submitButton);
-  
+
   });
-  
-  
+
   test('User can delete a multi-city trip form', async () => {
     getLocations.mockImplementation(() => Promise.resolve(locations));
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
     createATrip.mockImplementation(() => Promise.resolve(responseData));
-  
+
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+		getUsers.mockImplementation(() => Promise.resolve(managers));
+
     const initialState = {
       authState: {
         isAuthenticated: true
       }
     };
     const { getByTestId ,getAllByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-  
+
     const [
       addTripButton,
-  
+
     ] = await waitForElement(() => [
       getByTestId('addbutton'),
     ]);
-  
-    
+
+
     fireEvent.click(addTripButton);
-  
+
     const [
       removeButton
     ] = await waitForElement(() => [
   getAllByTestId('delete')
     ]);
-  
+
     fireEvent.click(removeButton[1])
-  
+
   });
 })
 
@@ -461,18 +577,17 @@ describe(' ', () => {
    });
 
 
-   test('User can create a one way trip', async () => {
-    getLocations.mockImplementation(() => Promise.resolve(locations));
-    getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
-    createATrip.mockImplementation(() => Promise.resolve(responseData));
-  
-    const initialState = {
-      authState: {
-        isAuthenticated: true
-      }
-    };
-    const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-  
+  //  test('User can create a one way trip', async () => {
+  //   getLocations.mockImplementation(() => Promise.resolve(locations));
+  //   getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
+  //   createATrip.mockImplementation(() => Promise.resolve(responseData));
+	//
+  //   const initialState = {
+  //     authState: {
+  //       isAuthenticated: true
+  //     }
+  //   };
+  //   const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+	//
+  // });
   });
-  });
-  

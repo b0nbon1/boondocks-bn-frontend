@@ -153,13 +153,13 @@ describe('User should be be able to view and edit profile', () => {
         getByPlaceholderText('Enter First Name'),
 			]
     );
-    
+
     fireEvent.change(firstNameField, { target: { value: ''}});
     fireEvent.blur(firstNameField);
 
     fireEvent.change(firstNameField, { target: { value: 'user'}});
     fireEvent.blur(firstNameField);
-    
+
 		fireEvent.change(emailField, { target: { value: 'user@'}});
 		fireEvent.blur(emailField);
 		expect(getByText('Email is not valid')).toBeInTheDocument();
@@ -174,7 +174,7 @@ describe('User should be be able to view and edit profile', () => {
 		const profileTitle = await waitForElement(
 			() => getByText('Update Profile')
     );
-    
+
 		const [emailField, cancelButton] = await waitForElement(
 			() => [
 				getByPlaceholderText('Enter Email'),
@@ -201,9 +201,6 @@ describe('User should be be able to view and edit profile', () => {
     );
     fireEvent.change(dateField, { target: { value: '12/12/2020'}});
     fireEvent.blur(dateField);
-
-    // fireEvent.change(managerField, { target: { value: 'none'}});
-    // fireEvent.blur(managerField);
 
     fireEvent.click(saveButton);
 
@@ -234,13 +231,13 @@ describe('User should be be able to view and edit profile', () => {
         getByPlaceholderText('Select Gender'),
 			]
     );
-    
+
     fireEvent.change(currencyField, { target: { value: 'Dollars'}});
     fireEvent.blur(currencyField);
 
     fireEvent.change(lineManagerField, { target: { value: '7'}});
     fireEvent.blur(lineManagerField);
-    
+
 		fireEvent.change(emailField, { target: { value: 'user@'}});
     fireEvent.blur(emailField);
 
@@ -254,7 +251,7 @@ describe('User should be be able to view and edit profile', () => {
 		expect(getByText('Save Changes')).toBeInTheDocument();
 		fireEvent.click(saveButton);
     fireEvent.change(emailField, { target: { value: 'user@gmail.com'}});
-    
+
 		fireEvent.blur(emailField);
 		fireEvent.click(saveButton);
 	});

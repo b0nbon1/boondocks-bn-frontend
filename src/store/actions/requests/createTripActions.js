@@ -12,6 +12,8 @@ import {
 	getLocationsWithHotels,
 	createATrip,
 } from '../../../lib/services/createRequest.service';
+import { transformProfile } from '../profile/profileActions';
+import { updateUserProfile } from '../../../lib/services/user.service';
 
 const fetchCreateTripData = () => async dispatch => {
 	try {
@@ -31,8 +33,12 @@ const fetchCreateTripData = () => async dispatch => {
 	}
 };
 
-const createTrip = (userRequest, endpoint) => async dispatch => {
+const createTrip = (userRequest, endpoint, profile) => async dispatch => {
 	dispatch(actionFunc(BUTTON_LOADING, true));
+
+	const userProfile = transformProfile(profile, dispatch);
+
+	await updateUserProfile(userProfile);
 
 	try {
 		const res = await createATrip(userRequest, endpoint);
