@@ -29,7 +29,7 @@ global.localStorage.setItem("bn_user_data", `{
 	"exp":1578558831
 }`);
 jest.mock("../../lib/services/user.service");
-jest.mock("universal-cookie", () => jest.fn());
+jest.mock("universal-cookie");
 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdpbGRuaXkwNUBnbWFpbC5jb20iLCJuYW1lIjoiR2lsZGFzIiwidXNlcklkIjoxLCJ2ZXJpZmllZCI6dHJ1ZSwicm9sZSI6InJlcXVlc3RlciIsImxpbmVNYW5hZ2VySWQiOm51bGwsImlhdCI6MTU3ODU3MTM0OSwiZXhwIjoxNTc4NjU3NzQ5fQ.SmBRYQ-zYgEl08jObfqrtFjrJTCU33-DsMGCRC2RZuc";
 Cookies.mockImplementation(
 	() => ({
