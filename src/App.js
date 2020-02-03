@@ -27,11 +27,11 @@ import UsersContainer from './components/UsersContainer';
 import CreateAccomodationPage from './views/accomodations/CreateAccomodationPage';
 import CreateRoomsPage from './views/accomodations/CreateRoomsPage';
 import SingleHotelPage from './views/accomodations/SingleHotelPage';
-import EditRequest from './components/request/EditRequest';
 import CreateRequestPage from './views/requests/CreateRequestPage';
 import ChatView from './views/ChatView';
 import BookingContainer from './components/BookingContainer';
 import ViewBooking from './components/ViewBookingContainer';
+import TravelStatsPage from './views/TravelStatsPage';
 
 export default function App() {
 	return (
@@ -44,8 +44,6 @@ export default function App() {
 						<Route path='/home' exact component={HomePage} />
 						<Route path='/register' exact component={RegisterPage} />
 						<Route path='/login' exact component={LoginPage} />
-						<Route path='/edit-request' exact component={EditRequest} />
-						{/* <Route path='/chat' exact component={Chat} /> */}
 						<ProtectedRoute
 							path='/profile/:userId'
 							component={ViewProfileContainer}
@@ -54,6 +52,11 @@ export default function App() {
 							path='/profile'
 							exact
 							component={ViewProfileContainer}
+						/>
+						<ProtectedRoute
+							path='/travel-stats'
+							exact
+							component={TravelStatsPage}
 						/>
 						<ProtectedRoute
 							path='/edit'
@@ -81,7 +84,7 @@ export default function App() {
 							component={BookingContainer}
 							title='Booking'
 						/>
-						<Route
+						<ProtectedRoute
 							path='/request/:requestId'
 							exact
 							component={SingleRequestPage}
@@ -115,9 +118,8 @@ export default function App() {
 							component={ViewProfileContainer}
 						/>
 						<ProtectedRoute path='/requests' exact component={RequestPage} />
-						<ProtectedRoute path='/booking' exact component={ViewBooking}/>
+						<ProtectedRoute path='/booking' exact component={ViewBooking} />
 						<ProtectedRoute path='/users' component={UsersContainer} />
-						<Route path='/auth/reset-password' component={ResetPasswordPage} />
 						<Redirect exact from='/' to='home' />
 						<Route component={NotFound} />
 					</Switch>
@@ -129,4 +131,3 @@ export default function App() {
 		</Provider>
 	);
 }
-

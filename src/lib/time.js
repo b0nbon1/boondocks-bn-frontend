@@ -1,5 +1,11 @@
 import moment from 'moment';
 
+export const getDateFromTimeX = (period, type) => {
+	return moment()
+		.subtract(period, type)
+		.format('YYYY-MM-DD');
+};
+
 export const formatIsoDate = date => {
 	if (date) {
 		return moment(date).format('ddd, MMMM Do YYYY');

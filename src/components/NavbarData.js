@@ -27,6 +27,10 @@ const navItemObjects = {
 			linkText: 'Requests',
 			linkRoute: '/requests',
 		},
+		{
+			linkText: 'Travel Stats',
+			linkRoute: '/travel-stats',
+		},
 	],
 	requester: [
 		{
@@ -36,6 +40,10 @@ const navItemObjects = {
 		{
 			linkText: 'Booking',
 			linkRoute: '/booking',
+		},
+		{
+			linkText: 'Travel Stats',
+			linkRoute: '/travel-stats',
 		},
 	],
 	suppliers: [

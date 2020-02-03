@@ -76,6 +76,7 @@ describe('<CreateRooms /> Test suite', () => {
   it('Should Redirect successfully', () => {
     const component = setUp();
     component.setProps({loading: false, status: 'success'});
+    component.setState({checkError: 'no-error'});
     expect(component.find('Redirect')).toHaveLength(1);
   });
 

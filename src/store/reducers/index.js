@@ -27,6 +27,7 @@ import bookingReducer from './bookingReducer';
 import notificationReducer from './notificationReducer';
 import markAllNotificationsAsReadReducer from './markAllNotificationsAsReadReducer';
 import updateNotificationReducer from './updateNotificationReducer';
+import tripStatsReducer from './tripStatsReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
@@ -39,7 +40,8 @@ const reducers = combineReducers({
 	authState: isAuthenticatedReducer,
 	errorState: errorReducer,
 	requestPageLimitState: requestPageLimitReducer,
-	requestsState: requestReducer,	usersState: usersReducer,
+	requestsState: requestReducer,
+	usersState: usersReducer,
 	navbarState: navbarReducer,
 	createHotelState: createHotelReducer,
 	createRoomState: createRoomsReducer,
@@ -57,6 +59,7 @@ const reducers = combineReducers({
 	markAsReadState: notificationReducer,
 	markAllNotificationsAsReadState: markAllNotificationsAsReadReducer,
 	updateNotificationState: updateNotificationReducer,
+	tripStatState: tripStatsReducer,
 });
 
 export default reducers;

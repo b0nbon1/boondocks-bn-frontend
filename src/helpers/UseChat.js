@@ -35,22 +35,23 @@ const useChat = () => {
 
 		socketRef.current.on('new_comment', data => {
 			dispatch(getNewNotification(data));
-			Toast('success', data.messages);
+
+			Toast('info', data.messages);
 		});
 
 		socketRef.current.on('new_request', data => {
 			dispatch(getNewNotification(data));
-			Toast('success', data.messages);
+			Toast('info', data.messages);
 		});
 
 		socketRef.current.on('request_approved_or_rejected', data => {
 			dispatch(getNewNotification(data));
-			Toast('success', data.messages);
+			Toast('info', data.messages);
 		});
 
 		socketRef.current.on('edited_request', data => {
 			dispatch(getNewNotification(data));
-			Toast('success', data.messages);
+			Toast('info', data.messages);
 		});
 
 		return () => {
