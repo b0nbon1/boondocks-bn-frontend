@@ -17,7 +17,12 @@ describe("\"ProtectedRoute\"", () => {
     }`;
   it("should render without error", function() {
     global.localStorage = { bn_user_data: user_data };
-    const props = { setAuthState: jest.fn() };
+    const props = {
+      setAuthState: jest.fn(),
+      location: {
+        search: "?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdpbGRuaXkwNUBnbWFpbC5jb20iLCJuYW1lIjoiR2lsZGFzIiwidXNlcklkIjoxLCJ2ZXJpZmllZCI6dHJ1ZSwicm9sZSI6InJlcXVlc3RlciIsImxpbmVNYW5hZ2VySWQiOm51bGwsImlhdCI6MTU3ODU3MTM0OSwiZXhwIjoxNTc4NjU3NzQ5fQ.SmBRYQ-zYgEl08jObfqrtFjrJTCU33-DsMGCRC2RZuc",
+      }
+    };
     wrapper = setUp(props);
     const component = wrapper.find(`[data-test='protected-route']`);
     expect(component.length).toBe(1);

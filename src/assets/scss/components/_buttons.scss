@@ -1,9 +1,9 @@
 @use "../utilities/variables" as *;
 
 .btn-round-login{
-  border-radius: 2.5rem;
-  padding-right: 2.5rem;
-  padding-left: 2.5rem;
+  border-radius: 1.7rem;
+  padding-right: 1.7rem;
+  padding-left: 1.7rem;
 }
 
 .btn-rounded-border {
@@ -21,6 +21,7 @@
   .btn {
     &-facebook, &-google {
       color: $color-white;
+      text-align: center !important
     }
 
     &-facebook {

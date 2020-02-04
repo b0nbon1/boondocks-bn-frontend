@@ -22,16 +22,7 @@ export class Notifications extends Component {
 	}
 
 	handleRedirect(id) {
-		const {
-			history,
-			markOneAsRead,
-			notifications,
-			clearNotification,
-		} = this.props;
-
-		const unreadNotifications = notifications.filter(notif => notif.id !== id);
-		clearNotification([...unreadNotifications]);
-
+		const { history, markOneAsRead } = this.props;
 		history.push(`/request/${id}`);
 		markOneAsRead(id);
 	}
@@ -44,7 +35,7 @@ export class Notifications extends Component {
 			edited_request: { title: 'Request edited' },
 		};
 		const { props } = this;
-		const { markAllAsRead, notifications, clearNotification } = props;
+		const { markAllAsRead, notifications } = props;
 		return (
 			<div>
 				<ul className='dropdown-menu notification'>
@@ -54,10 +45,7 @@ export class Notifications extends Component {
 								{notifications.length ? (
 									<a
 										href='#!'
-										onClick={() => {
-											markAllAsRead();
-											clearNotification([]);
-										}}
+										onClick={markAllAsRead}
 										className='float-right text-light'
 									>
 										Mark all as read
@@ -78,9 +66,9 @@ export class Notifications extends Component {
 										data-testid='notification'
 										className={`notification-box${evenNotificationClass(idx)}`}
 										key={notificationItem.id}
-										onClick={() =>
-											this.handleRedirect(notificationItem.requestId)
-										}
+										onClick={() => {
+											return this.handleRedirect(notificationItem.requestId);
+										}}
 									>
 										<div className='row'>
 											<div className='col-lg-12 col-sm-12 col-12'>
@@ -111,10 +99,7 @@ Notifications.propTypes = {
 	notification: propTypes.func.isRequired,
 	markAllAsRead: propTypes.func.isRequired,
 	markOneAsRead: propTypes.func.isRequired,
-	clearNotification: propTypes.func.isRequired,
-	history: propTypes.shape({
-		push: propTypes.func.isRequired,
-	}).isRequired,
+	history: propTypes.shape({ push: propTypes.func.isRequired }).isRequired,
 };
 
 const mapDispatchToProps = {
