@@ -32,18 +32,18 @@ function HotelCard({ data }) {
 						/>
 					</div>
 					<div className='card-body'>
-						<div className='d-flex'>
+						<div className='d-flex flex-column'>
 							<h6 className='card-title mr-3 text-dark'>{name}</h6>
 							<StarRatings
 								rating={Number(average_rating)}
-								starRatedColor='gold'
+								starRatedColor='black'
 								numberOfStars={5}
 								starDimension='1rem'
 								starSpacing='.1rem'
 								name='rating'
 							/>
 						</div>
-						<p className='card-text text-secondary'>{description}</p>
+						<p className='card-text text-secondary mt-3'>{description}</p>
 					</div>
 				</Link>
 				<div className='d-inline p-3'>

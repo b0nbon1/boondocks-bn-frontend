@@ -22,9 +22,12 @@ import Toast from '../../../lib/toast';
  * @param {Number} userId
  * @returns {function(...[*]=)}
  */
-const fetchUserProfile = userId => async dispatch => {
+const fetchUserProfile = (
+	userId,
+	creatingRequest = false,
+) => async dispatch => {
 	const profileData = await getUserProfile(userId);
-	const profile = profileData.data.data;
+	let profile = profileData.data.data;
 
 	const managersData = await getUsers('manager');
 	const managers = managersData.data.data;
@@ -32,7 +35,14 @@ const fetchUserProfile = userId => async dispatch => {
 	dispatch(
 		actionFunc(ACTION_TYPES.GET_USER_PROFILE_SUCCESS, {
 			profile: nullToStr({
-				...profile,
+				...(!profile.remember && creatingRequest
+					? (profile = {
+							lineManager:
+								profile.lineManager === 'none' ? 0 : profile.lineManager,
+							email: profile.email,
+							remember: profile.remember,
+					  })
+					: profile),
 				birthDate: profile.birthDate && profile.birthDate.split('T')[0],
 			}),
 			managers,
@@ -56,6 +66,10 @@ const revertChanges = () => async dispatch => {
  */
 const setIsEditing = value => async dispatch => {
 	dispatch(actionFunc(ACTION_TYPES.SET_EDIT_MODE, value));
+};
+
+const clearErrors = () => async dispatch => {
+	dispatch(actionFunc(ACTION_TYPES.CLEAR_ERRORS));
 };
 
 /**
@@ -146,7 +160,12 @@ export const transformProfile = (userProfile, dispatch) => {
 	delete userProfile.updatedAt;
 	delete userProfile.receiveNotification;
 
-	if (userProfile.lineManagerId === 'none') {
+	const invalidLineManagerValues = [0, '0', 'none'];
+
+	if (
+		!userProfile.lineManagerId ||
+		invalidLineManagerValues.includes(userProfile.lineManagerId)
+	) {
 		const error = {};
 		error.lineManagerError = 'Please select a line manager';
 		dispatch(actionFunc(ACTION_TYPES.UPDATE_PROFILE, { input: {}, error }));
@@ -181,8 +200,12 @@ const saveProfile = userProfile => async dispatch => {
 	const profile = transformProfile(userProfile, dispatch);
 	dispatch(actionFunc(BUTTON_LOADING, true));
 
-	await updateUserProfile(profile);
+	if (!profile) {
+		dispatch(actionFunc(BUTTON_LOADING, false));
+		return false;
+	}
 
+	await updateUserProfile(profile);
 	const { userId } = JSON.parse(localStorage.getItem('bn_user_data'));
 	const profileData = await getUserProfile(userId);
 	const updatedProfile = profileData.data.data;
@@ -196,7 +219,7 @@ const saveProfile = userProfile => async dispatch => {
 			userId,
 		}),
 	);
-	Toast('success', 'Profile updated successfully');
+
 	dispatch(actionFunc(ACTION_TYPES.SET_EDIT_MODE, false));
 	dispatch(actionFunc(BUTTON_LOADING, false));
 };
@@ -207,4 +230,5 @@ export {
 	updateProfile,
 	saveProfile,
 	revertChanges,
+	clearErrors,
 };
