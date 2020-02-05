@@ -45,11 +45,11 @@ describe("\"RequestSearchAction\" - Requester", () => {
               {
                 "payload": [
                   {
-                    createdAt: undefined,
-                    id: 2,
+                    id: undefined,
                     status: 'open',
                     type: 'return',
-                    updatedAt: '2020-01-23T11:36:11.365Z'
+                    updatedAt: '2020-01-23T11:36:11.365Z',
+                    reason: 'Branch visit in kigali'
                   }], "type": "REQUEST_SEARCH_SUCCESS"
               },
               { "payload": false, "type": "LOADING" }]
@@ -74,11 +74,11 @@ describe("\"RequestSearchAction\" - Requester", () => {
           {
             "payload": [
               {
-                createdAt: undefined,
-                id: 2,
+                id: undefined,
                 status: 'open',
                 type: 'return',
-                updatedAt: '2020-01-23T11:36:11.365Z'
+                updatedAt: '2020-01-23T11:36:11.365Z',
+                reason: 'Branch visit in kigali'
               }], "type": "REQUEST_SEARCH_SUCCESS"
           },
           { "payload": false, "type": "LOADING" }]);
@@ -101,11 +101,11 @@ describe("\"RequestSearchAction\" - Requester", () => {
             {
               "payload": [
                 {
-                  createdAt: undefined,
-                  id: 2,
+                  id: undefined,
                   status: 'open',
                   type: 'return',
-                  updatedAt: '2020-01-23T11:36:11.365Z'
+                  updatedAt: '2020-01-23T11:36:11.365Z',
+                  reason: 'Branch visit in kigali'
                 }], "type": "REQUEST_SEARCH_SUCCESS"
             },
             { "payload": false, "type": "LOADING" }]);
@@ -130,11 +130,11 @@ describe("\"RequestSearchAction\" - Requester", () => {
           {
             "payload": [
               {
-                createdAt: undefined,
-                id: 2,
+                id: undefined,
                 status: 'open',
                 type: 'return',
-                updatedAt: '2020-01-23T11:36:11.365Z'
+                updatedAt: '2020-01-23T11:36:11.365Z',
+                reason: 'Branch visit in kigali'
               }], "type": "REQUEST_SEARCH_SUCCESS"
           },
           { "payload": false, "type": "LOADING" }]);
@@ -189,7 +189,7 @@ describe("\"RequestSearchAction\" - Requester", () => {
                 "payload": [
                   {
                     '': 'undefinedundefined',
-                    id: 2,
+                    id: undefined,
                     names: 'undefined undefined',
                     reason: 'Branch visit in kigali',
                     status: 'open',
@@ -198,7 +198,7 @@ describe("\"RequestSearchAction\" - Requester", () => {
                   },
                   {
                     '': 'undefinedundefined',
-                    id: 2,
+                    id: undefined,
                     names: 'undefined undefined',
                     reason: 'Branch visit in kigali',
                     status: 'open',
@@ -207,7 +207,7 @@ describe("\"RequestSearchAction\" - Requester", () => {
                   },
                   {
                     '': 'undefinedundefined',
-                    id: 2,
+                    id: undefined,
                     names: 'undefined undefined',
                     reason: 'Branch visit in kigali',
                     status: 'open',

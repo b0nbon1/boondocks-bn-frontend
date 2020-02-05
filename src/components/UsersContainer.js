@@ -11,6 +11,7 @@ import {
 import UsersListItem from '../views/users/UsersListItem';
 import Modal from './Modal';
 import AssignRole from '../views/users/AssignRole';
+import UserPagination from './UserPagination';
 
 class UsersContainer extends Component {
 	constructor(props) {
@@ -23,7 +24,7 @@ class UsersContainer extends Component {
 		this.handleChangeRole = this.handleChangeRole.bind(this);
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
 		const { props } = this;
 		props.fetchUsers();
 	}
@@ -72,7 +73,7 @@ class UsersContainer extends Component {
 						</div>
 					</div>
 					<ul>
-						{props.users
+						{props.usersPaginated
 							.filter(user => user.id !== loggedInUser.userId)
 							.map(user => (
 								<UsersListItem
@@ -82,6 +83,7 @@ class UsersContainer extends Component {
 								/>
 							))}
 					</ul>
+					<UserPagination users={props.users} />
 				</div>
 				<Modal visible={state.popupVisibility}>
 					<AssignRole
@@ -99,6 +101,7 @@ class UsersContainer extends Component {
 
 const mapStateToProps = state => ({
 	users: state.usersState.users,
+	usersPaginated: state.listState.users,
 	selectedUser: state.usersState.selectedUser,
 	loading: state.loadingState.buttonLoading,
 });
@@ -113,6 +116,7 @@ export default connect(mapStateToProps, {
 
 UsersContainer.propTypes = {
 	users: PropTypes.instanceOf(Array).isRequired,
+	usersPaginated: PropTypes.array,
 	selectedUser: PropTypes.instanceOf(Object).isRequired,
 	fetchUsers: PropTypes.func.isRequired,
 	setSelectedUser: PropTypes.func.isRequired,
@@ -124,4 +128,5 @@ UsersContainer.propTypes = {
 
 UsersContainer.defaultProps = {
 	loading: null,
+	usersPaginated: [],
 };

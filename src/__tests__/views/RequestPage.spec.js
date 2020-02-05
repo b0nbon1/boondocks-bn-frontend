@@ -98,7 +98,7 @@ describe("\"RequestPage view\"", () => {
   });
 
   it("should mapStateToProps", function() {
-    const state = { requestListState: { requests: [] } };
+    const state = { listState: { requests: [] } };
     expect(mapStateToProps(state)).toEqual({ requests: [] })
   });
 });

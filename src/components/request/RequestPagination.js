@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PaginationButtons from './PaginationButtons';
-import setRequestsList from '../../store/actions/requestListAction';
+import { setRequestsList } from '../../store/actions/listAction';
 
 /**
  * On Page Changed
@@ -56,7 +56,7 @@ export const RequestPagination = ({
 		allRequests: [],
 		currentRequests: [],
 		currentPage: null,
-		totalPages: null
+		totalPages: null,
 	});
 
 	React.useEffect(() => {
@@ -73,7 +73,7 @@ export const RequestPagination = ({
 			className='my-4 ml-auto'
 		>
 			<PaginationButtons
-				allRequests={allRequests}
+				allListables={allRequests}
 				onPageChanged={data => {
 					onPageChanged({
 						data,

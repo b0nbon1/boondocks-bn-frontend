@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { requestSearch } from '../../store/actions/requestSearchAction';
-// eslint-disable-next-line no-unused-vars
-import setRequestList from '../../store/actions/requestListAction';
+// eslint-disable-next-line no-unused-vars,import/named
+import { setRequestsList } from '../../store/actions/listAction';
 import { IS_REQUEST_SEARCHING } from '../../store/actions/types';
 
 /**
@@ -50,7 +50,7 @@ export const RequestSearchForm = ({
 			<div className='form-row'>
 				<div className='form-group col-md-6'>
 					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-					<label htmlFor='travel_date'>travel date</label>
+					<label htmlFor='travelDate'>travel date</label>
 					<input
 						data-testid='travel_date_field'
 						className='form-control'
@@ -62,7 +62,8 @@ export const RequestSearchForm = ({
 					/>
 				</div>
 				<div className='form-group col-md-6'>
-					<label htmlFor='return_date'>return date</label>
+					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+					<label htmlFor='returnDate'>return date</label>
 					<input
 						data-testid='return_date_field'
 						className='form-control'
@@ -76,7 +77,8 @@ export const RequestSearchForm = ({
 			</div>
 			<div className='form-row'>
 				<div className='col-lg-12'>
-					<label htmlFor='inputSearchTerm'>search term</label>
+					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+					<label htmlFor='searchString'>search term</label>
 					<div className='row'>
 						<div className='form-group col-md-9'>
 							<input
@@ -117,7 +119,7 @@ RequestSearchForm.defaultProps = {
 
 export const mapDispatchToProps = {
 	requestSearch,
-	setRequests: setRequestList,
+	setRequests: setRequestsList,
 	resetIsSearching: () => ({ type: IS_REQUEST_SEARCHING, payload: true }),
 };
 

@@ -16,7 +16,7 @@ export const NavbarNav = ({ navItems, isAuthenticated, notifications }) => {
 			<Link className='navbar-brand' to='/'>
 				<img
 					src='https://bn-pictures.s3.eu-north-1.amazonaws.com/bn_logo.svg'
-					alt=''
+					alt='Barefoot logo'
 				/>
 			</Link>
 			<button

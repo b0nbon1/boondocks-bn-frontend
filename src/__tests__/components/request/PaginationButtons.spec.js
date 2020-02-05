@@ -10,7 +10,7 @@ import thunk from "redux-thunk";
 const setUp = (props = {}) => shallow(<PaginationButtons {...props} />);
 const props = {
   onPageChanged: jest.fn(),
-  allRequests: allRequestsManager,
+  allListables: allRequestsManager,
   pageNeighbours: 1
 };
 
