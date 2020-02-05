@@ -2,7 +2,8 @@ import React from 'react';
 import StarRatings from 'react-star-ratings';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import hotelPlaceholder from '../../assets/images/hotel-placeholder.jpeg';
+import hotelPlaceholder from '../../assets/images/hotel-placeholder.png';
+import LikeUnlike from './LikeUnlike';
 
 function HotelCard({ data }) {
 	const {
@@ -14,6 +15,7 @@ function HotelCard({ data }) {
 		id,
 		likesCount,
 		unLikesCount,
+		likes,
 		location,
 	} = data;
 	return (
@@ -27,30 +29,32 @@ function HotelCard({ data }) {
 					/>
 				</div>
 				<div className='card-body'>
-				<div className='d-flex'>
-					<h5 className='card-title mr-3 text-dark'>{name}</h5>
-					<StarRatings
-						rating={Number(average_rating)}
-						starRatedColor='gold'
-						numberOfStars={5}
-						starDimension='1rem'
-						starSpacing='.1rem'
-						name='rating'
-					/>
+					<div className='d-flex'>
+						<h6 className='card-title mr-3 text-dark'>{name}</h6>
+						<StarRatings
+							rating={Number(average_rating)}
+							starRatedColor='gold'
+							numberOfStars={5}
+							starDimension='1rem'
+							starSpacing='.1rem'
+							name='rating'
+						/>
+					</div>
+					<p className='card-text text-secondary'>{description}</p>
 				</div>
-				<p className='card-text text-secondary'>{description}</p>
-			</div>
 			</Link>
-			<div className='d-inline-block p-3'>
+			<div className='d-inline p-3'>
 				<Link to={`/booking/${id}`} className='btn btn-primary text-white mr-2'>
 					Book Now
 				</Link>
-				<i className='fa fa-thumbs-o-up mr-2' aria-hidden='true'>
-					{likesCount}
-				</i>
-				<i className='fa fa-thumbs-o-down' aria-hidden='true'>
-					{unLikesCount}
-				</i>
+				<div className='float-right'>
+					<LikeUnlike
+						id={id}
+						likesCount={likesCount}
+						unLikesCount={unLikesCount}
+						likes={likes}
+					/>
+				</div>
 			</div>
 			<div className='card-footer bg-white text-muted'>
 				Location:

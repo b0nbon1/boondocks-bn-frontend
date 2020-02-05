@@ -9,6 +9,10 @@ import { BrowserRouter } from "react-router-dom";
 import thunk from "redux-thunk";
 import localStorage from "../../__mocks__/LocalStorage";
 import  { HomePage } from '../../views/HomePage';
+jest.mock('../../components/accomodations/LikeUnlike', () => {
+  const ComponentToMock = () => <div />;
+  return ComponentToMock;
+})
 
 describe('<HomePage />', () => {
 	let props;
@@ -29,6 +33,13 @@ describe('<HomePage />', () => {
       loading: false,
       data: [{
 				id: 1,
+				location: {
+					city: 'Nairobi',
+					country: 'Kenya',
+				},
+				average_rating: '1'
+			}, {
+				id: 2,
 				location: {
 					city: 'Nairobi',
 					country: 'Kenya',

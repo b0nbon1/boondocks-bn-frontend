@@ -4,6 +4,11 @@ import '@testing-library/jest-dom/extend-expect';
 import { render } from "@testing-library/react";
 import HotelCard from '../../../components/accomodations/HotelCard';
 
+jest.mock('../../../components/accomodations/LikeUnlike', () => {
+  const ComponentToMock = () => <div />;
+  return ComponentToMock;
+})
+
 describe('<HotelCard /> Test suite', () => {
   let props;
   beforeEach(() => {

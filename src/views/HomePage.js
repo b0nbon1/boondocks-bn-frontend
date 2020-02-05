@@ -44,9 +44,11 @@ export const HomePage = ({
 					<></>
 				)}
 				<div className='card-deck'>
-					{data.map(hotel => (
-						<HotelCard key={hotel.id} data={hotel} />
-					))}
+					{data
+						.sort((a, b) => a.id - b.id)
+						.map(hotel => (
+							<HotelCard key={hotel.id} data={hotel} />
+						))}
 				</div>
 			</div>
 		);

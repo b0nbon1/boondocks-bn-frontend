@@ -5,6 +5,12 @@ import "@testing-library/jest-dom/extend-expect";
 import { BrowserRouter } from "react-router-dom";
 import  { SingleHotelPage, mapStateToProps } from '../../views/accomodations/SingleHotelPage';
 
+
+jest.mock('../../components/accomodations/LikeUnlike', () => {
+  const ComponentToMock = () => <div />;
+  return ComponentToMock;
+})
+
 describe('Single Hotel page', () => {
 	let props;
 	it('should render without error', () => {
