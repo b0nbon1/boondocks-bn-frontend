@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import propTypes from 'prop-types';
 import Select from 'react-select';
+import moment from 'moment';
 import LoadingButton from '../templates/Button';
 import TextArea from '../templates/TextArea';
 import {
@@ -28,11 +29,10 @@ export class CreateRequest extends Component {
 		super(props);
 
 		this.state = {
+			tripType: 'return',
 			allTrips: [
 				{
 					id: 1,
-					tripType: 'return',
-					'tripType-0': 'return',
 					travelDate: '',
 					returnDate: '',
 					leavingFrom: null,
@@ -57,42 +57,13 @@ export class CreateRequest extends Component {
 
 	createUI(allLocationOptions) {
 		const { state } = this;
+		const { tripType } = state;
 		const returnDateCheck = new Date();
 		returnDateCheck.setDate(returnDateCheck.getDate() + 1);
+
 		return state.allTrips.map((el, i) => (
 			// eslint-disable-next-line react/no-array-index-key
 			<div key={i} className='eachForm'>
-				<div className='center-trip-radio-buttons'>
-					<div className='form-check'>
-						<label>
-							<input
-								type='radio'
-								name={`tripType-${i}`}
-								className='form-check-input'
-								value='one way'
-								checked={el[`tripType-${i}`] === 'one way'}
-								onChange={event => this.handleChangeType(event, el)}
-								data-testid='oneway'
-							/>
-							one way trip
-						</label>
-					</div>
-					<div className='form-check'>
-						<label>
-							<input
-								type='radio'
-								name={`tripType-${i}`}
-								className='form-check-input'
-								value='return'
-								checked={el[`tripType-${i}`] === 'return'}
-								onChange={event => this.handleChangeType(event, el)}
-								data-testid='return'
-							/>
-							return trip
-						</label>
-					</div>
-				</div>
-
 				<div className='form-group trips-date-divs'>
 					<div className='dateDivs'>
 						<input
@@ -115,8 +86,13 @@ export class CreateRequest extends Component {
 							defaultValue={el.returnDate}
 							className='form-control createTripInputs'
 							onChange={event => this.handleChangeReturnDate(event, el)}
-							disabled={el.dateDisable}
-							min={returnDateCheck.toISOString().split('T')[0]}
+							disabled={tripType === 'one way' || tripType === 'multi-city'}
+							min={
+								moment(el.travelDate)
+									.add(1, 'days')
+									.format()
+									.split('T')[0]
+							}
 							data-testid='returnDate'
 						/>
 						<label htmlFor='returnDate'>return date</label>
@@ -131,12 +107,11 @@ export class CreateRequest extends Component {
 								onChange={event => this.handleChange(event, el)}
 								className='form-control createTripInputs'
 								name='leavingFrom'
+								defaultValue={el.leavingFrom || ''}
 								required
 								data-testid='leavingFrom'
 							>
-								<option value='' defaultValue>
-									Choose
-								</option>
+								<option value=''>Choose</option>
 								<optgroup>{allLocationOptions}</optgroup>
 							</select>
 						</label>
@@ -223,6 +198,11 @@ export class CreateRequest extends Component {
 						className='btn btn-default btn-sm'
 						onClick={() => this.removeClick(i)}
 						data-testid='delete'
+						hidden={
+							tripType === 'one way' ||
+							tripType === 'return' ||
+							state.allTrips.length <= 1
+						}
 					>
 						<span className='oi oi-trash' />
 						Remove trip
@@ -236,35 +216,35 @@ export class CreateRequest extends Component {
 		const { name, value } = event.target;
 		const { state } = this;
 		const currentValuesInState = [...state.allTrips];
+
 		const currentFormFieldWrapper = currentValuesInState.find(
 			forms => forms.id === element.id,
 		);
+		const currentFormIndex = currentValuesInState.findIndex(
+			forms => forms.id === element.id,
+		);
+
 		currentFormFieldWrapper[name] = value;
-		currentValuesInState.splice(element.id - 1, 1, currentFormFieldWrapper);
+		currentValuesInState.splice(currentFormIndex, 1, currentFormFieldWrapper);
 		this.setState({ allTrips: currentValuesInState });
 	}
 
-	handleChangeType(event, element) {
-		const { name, value } = event.target;
+	handleChangeType(e) {
+		const { name, value } = e.target;
 		const { state } = this;
-		const currentValuesInState = [...state.allTrips];
-		const currentFormFieldWrapper = currentValuesInState.find(
-			forms => forms.id === element.id,
-		);
 
-		currentFormFieldWrapper[name] = value;
-		currentFormFieldWrapper.tripType = value;
-		currentFormFieldWrapper.type = value;
-
-		if (value === 'one way') {
-			currentFormFieldWrapper.dateDisable = true;
-			currentFormFieldWrapper.returnDate = '';
+		if (value !== 'multi-city' && state.allTrips.length > 1) {
+			this.setState(prevState => ({
+				allTrips: [
+					{
+						...prevState.allTrips[0],
+					},
+				],
+			}));
 		}
-		if (value === 'return') {
-			currentFormFieldWrapper.dateDisable = false;
-		}
-		currentValuesInState.splice(element.id - 1, 1, currentFormFieldWrapper);
-		this.setState({ allTrips: currentValuesInState });
+		this.setState({
+			[name]: value,
+		});
 	}
 
 	handleChangeReturnDate(event, element) {
@@ -274,6 +254,9 @@ export class CreateRequest extends Component {
 		const currentFormFieldWrapper = currentValuesInState.find(
 			forms => forms.id === element.id,
 		);
+		const currentFormIndex = currentValuesInState.findIndex(
+			forms => forms.id === element.id,
+		);
 
 		const travelDateObj = new Date(element.travelDate);
 		const returnDateObj = new Date(value);
@@ -281,7 +264,7 @@ export class CreateRequest extends Component {
 		if (travelDateObj < returnDateObj) {
 			event.target.setCustomValidity('');
 			currentFormFieldWrapper[name] = value;
-			currentValuesInState.splice(element.id - 1, 1, currentFormFieldWrapper);
+			currentValuesInState.splice(currentFormIndex, 1, currentFormFieldWrapper);
 			this.setState({ allTrips: currentValuesInState });
 		} else {
 			event.target.setCustomValidity(
@@ -296,6 +279,9 @@ export class CreateRequest extends Component {
 		const currentValuesInState = [...state.allTrips];
 
 		const currentFormFieldWrapper = currentValuesInState.find(
+			forms => forms.id === element.id,
+		);
+		const currentFormIndex = currentValuesInState.findIndex(
 			forms => forms.id === element.id,
 		);
 
@@ -322,7 +308,7 @@ export class CreateRequest extends Component {
 			}
 			currentFormFieldWrapper.hotels = hotelOptions;
 		}
-		currentValuesInState.splice(element.id - 1, 1, currentFormFieldWrapper);
+		currentValuesInState.splice(currentFormIndex, 1, currentFormFieldWrapper);
 		this.setState({ allTrips: currentValuesInState });
 	}
 
@@ -332,6 +318,9 @@ export class CreateRequest extends Component {
 		const currentValuesInState = [...state.allTrips];
 
 		const currentFormFieldWrapper = currentValuesInState.find(
+			forms => forms.id === element.id,
+		);
+		const currentFormIndex = currentValuesInState.findIndex(
 			forms => forms.id === element.id,
 		);
 		currentFormFieldWrapper[name] = value;
@@ -358,7 +347,7 @@ export class CreateRequest extends Component {
 			}
 			currentFormFieldWrapper.availableRooms = roomOptions;
 		}
-		currentValuesInState.splice(element.id - 1, 1, currentFormFieldWrapper);
+		currentValuesInState.splice(currentFormIndex, 1, currentFormFieldWrapper);
 		this.setState({ allTrips: currentValuesInState });
 	}
 
@@ -371,31 +360,34 @@ export class CreateRequest extends Component {
 		const currentFormFieldWrapper = currentValuesInState.find(
 			forms => forms.id === element.id,
 		);
+		const currentFormIndex = currentValuesInState.findIndex(
+			forms => forms.id === element.id,
+		);
+
 		currentFormFieldWrapper.rooms = rooms;
-		currentValuesInState.splice(element.id - 1, 1, currentFormFieldWrapper);
+		currentValuesInState.splice(currentFormIndex, 1, currentFormFieldWrapper);
 		this.setState({ allTrips: currentValuesInState });
 	}
 
 	addClick() {
-		this.setState(prevState => ({
-			allTrips: [
-				...prevState.allTrips,
-				{
-					id: prevState.allTrips[prevState.allTrips.length - 1].id + 1,
-					tripType: 'return',
-					[`tripType-${
-						prevState.allTrips[prevState.allTrips.length - 1].id
-					}`]: 'return',
-					travelDate: '',
-					returnDate: '',
-					leavingFrom: null,
-					goingTo: null,
-					hotel: null,
-					rooms: null,
-					reason: null,
-				},
-			],
-		}));
+		this.setState(prevState => {
+			return {
+				allTrips: [
+					...prevState.allTrips,
+					{
+						id: prevState.allTrips[prevState.allTrips.length - 1].id + 1,
+						travelDate: '',
+						returnDate: '',
+						leavingFrom:
+							prevState.allTrips[prevState.allTrips.length - 1].goingTo,
+						goingTo: null,
+						hotel: null,
+						rooms: null,
+						reason: null,
+					},
+				],
+			};
+		});
 	}
 
 	removeClick(i) {
@@ -411,6 +403,7 @@ export class CreateRequest extends Component {
 		formSubmitEvent.preventDefault();
 		const { state } = this;
 		const { props } = this;
+		const { tripType } = state;
 		const formsArray = state.allTrips;
 
 		const { profile, editErrors } = props;
@@ -429,7 +422,6 @@ export class CreateRequest extends Component {
 		if (formsArray.length === 1) {
 			const thisFormState = formsArray[0];
 			const {
-				tripType,
 				leavingFrom,
 				goingTo,
 				travelDate,
@@ -474,17 +466,15 @@ export class CreateRequest extends Component {
 			const formRequestArray = [];
 			formsArray.forEach(element => {
 				const {
-					tripType,
 					leavingFrom,
 					goingTo,
 					travelDate,
-					returnDate,
 					hotel,
 					rooms,
 					reason,
 				} = element;
 				userRequest = {
-					type: tripType,
+					type: 'one way',
 					leavingFrom: Number(leavingFrom),
 					goingTo: Number(goingTo),
 					travelDate,
@@ -496,12 +486,6 @@ export class CreateRequest extends Component {
 						...userRequest,
 						hotelId: Number(hotel),
 						rooms,
-					};
-				}
-				if (tripType === 'return') {
-					userRequest = {
-						...userRequest,
-						returnDate,
 					};
 				}
 				formRequestArray.push(userRequest);
@@ -521,6 +505,7 @@ export class CreateRequest extends Component {
 		const { createTripData } = this.props;
 		const { tripCreated } = createTripData;
 		const { state } = this;
+		const { tripType } = state;
 		const { checkSubmit } = state;
 		if (tripCreated === true && checkSubmit === true) {
 			return <Redirect to='/requests' />;
@@ -546,12 +531,58 @@ export class CreateRequest extends Component {
 					className='createTripForm card-body'
 					onSubmit={event => this.handleFormSubmit(event)}
 				>
+					<div className='center-trip-radio-buttons'>
+						<div className='form-check'>
+							<label>
+								<input
+									type='radio'
+									name='tripType'
+									className='form-check-input'
+									value='one way'
+									checked={state.tripType === 'one way'}
+									onChange={event => this.handleChangeType(event)}
+									data-testid='oneway'
+								/>
+								One way trip
+							</label>
+						</div>
+						<div className='form-check'>
+							<label>
+								<input
+									type='radio'
+									name='tripType'
+									className='form-check-input'
+									value='return'
+									checked={state.tripType === 'return'}
+									onChange={event => this.handleChangeType(event)}
+									data-testid='return'
+								/>
+								Return trip
+							</label>
+						</div>
+						<div className='form-check'>
+							<label>
+								<input
+									type='radio'
+									name='tripType'
+									className='form-check-input'
+									value='multi-city'
+									checked={state.tripType === 'multi-city'}
+									onChange={event => this.handleChangeType(event)}
+									data-testid='multi-city'
+								/>
+								Multi-city trip
+							</label>
+						</div>
+					</div>
+
 					{this.createUI(allLocationOptions, allLocationsWithHotels)}
 					<button
 						type='button'
 						className='btn btn-default btn-sm'
 						onClick={() => this.addClick()}
 						data-testid='addbutton'
+						hidden={tripType === 'one way' || tripType === 'return'}
 					>
 						<span className='oi oi-plus' />
 						Add trip

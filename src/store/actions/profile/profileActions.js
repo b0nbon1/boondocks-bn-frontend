@@ -179,7 +179,6 @@ export const transformProfile = (userProfile, dispatch) => {
  */
 const saveProfile = userProfile => async dispatch => {
 	const profile = transformProfile(userProfile, dispatch);
-	console.log(profile);
 	dispatch(actionFunc(BUTTON_LOADING, true));
 
 	await updateUserProfile(profile);

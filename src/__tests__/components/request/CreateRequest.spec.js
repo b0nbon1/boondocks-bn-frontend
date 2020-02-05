@@ -448,9 +448,8 @@ describe(' ', () => {
     const { getByTestId ,getAllByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
 
     const [
-      returnTypeField,
+      multiCityTypeField,
       travelDateField,
-      returnDateField,
       leavingFromField,
       goingToField,
       selectHotelField,
@@ -460,9 +459,8 @@ describe(' ', () => {
       addTripButton,
       removeBtn,
     ] = await waitForElement(() => [
-      getAllByTestId('return'),
+      getAllByTestId('multi-city'),
       getAllByTestId('travelDate'),
-      getAllByTestId('returnDate'),
       getAllByTestId('leavingFrom'),
       getAllByTestId('goingTo'),
       getAllByTestId('hotel'),
@@ -477,32 +475,26 @@ describe(' ', () => {
     fireEvent.click(addTripButton);
 
     const [
-      returnTypeField1,
       travelDateField1,
-      returnDateField1,
       leavingFromField1,
       goingToField1,
       selectHotelField1,
       selectRoomField1,
       reasonField1,
       addTripButton1,
-      oneWayTypeField1,
+      multiCityTypeField1,
     ] = await waitForElement(() => [
-      getAllByTestId('return'),
       getAllByTestId('travelDate'),
-      getAllByTestId('returnDate'),
       getAllByTestId('leavingFrom'),
       getAllByTestId('goingTo'),
       getAllByTestId('hotel'),
       getAllByTestId('room'),
       getAllByTestId('reason'),
       getByTestId('addbutton'),
-      getAllByTestId('oneway'),
+      getAllByTestId('multi-city'),
     ]);
 
-
-    fireEvent.click(returnTypeField[0]);
-    fireEvent.change(returnDateField[0], {target:{value: '2021-03-31'}});
+    fireEvent.click(multiCityTypeField[0]);
     fireEvent.change(travelDateField[0], {target:{value: '2021-01-31'}});
     fireEvent.change(leavingFromField[0], {target:{value: 1}});
     fireEvent.change(goingToField[0], {target:{value: 7}});
@@ -510,7 +502,6 @@ describe(' ', () => {
     fireEvent.change(selectRoomField[0], {target:{value: 9}});
     fireEvent.change(reasonField[0], {target:{value: 'Reason for the trip goes here'}});
 
-    fireEvent.click(oneWayTypeField1[1]);
     fireEvent.change(travelDateField1[1], {target:{value: '2021-01-31'}});
     fireEvent.change(leavingFromField1[1], {target:{value: 1}});
     fireEvent.change(goingToField1[1], {target:{value: 7}});
