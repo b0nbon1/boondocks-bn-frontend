@@ -22,6 +22,7 @@ class Accordion extends Component {
 		return (
 			<div className='accordion'>
 				<button
+					data-test='toggle-accordion'
 					type='button'
 					className={cx('accordion__toggle', {
 						'accordion__toggle--active': isOpen,
@@ -45,16 +46,7 @@ class Accordion extends Component {
 						isOpen ? 'accordion__collapse--active' : ''
 					}`}
 				>
-					<div className='accordion__content'>
-						{children}
-						{/* <button
-							type='button'
-							onClick={() => this.toggle(1)}
-							className='accordion__button'
-						>
-							close
-						</button> */}
-					</div>
+					<div className='accordion__content'>{children}</div>
 				</Collapse>
 			</div>
 		);

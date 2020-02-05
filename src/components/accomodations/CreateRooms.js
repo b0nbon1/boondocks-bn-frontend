@@ -62,7 +62,7 @@ export class CreateRooms extends Component {
 	render() {
 		const { state } = this;
 		const { loading, status, match } = this.props;
-		if (!loading && status === 'success') {
+		if (!loading && status === 'success' && state.checkError) {
 			const { id } = match.params;
 			return <Redirect to={`/hotel/${id}`} />;
 		}

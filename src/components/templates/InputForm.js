@@ -16,6 +16,7 @@ const InputForm = ({
 	pattern,
 	disabled,
 	min,
+	max,
 }) => (
 	<div data-test='input-form' className='form-group'>
 		{label && <label htmlFor={name}>{label}</label>}
@@ -34,6 +35,7 @@ const InputForm = ({
 			pattern={pattern}
 			disabled={disabled}
 			min={min}
+			max={max}
 		/>
 		{error && error !== '' && (
 			<span data-testid='error-text' className='invalid-feedback'>
@@ -57,6 +59,7 @@ InputForm.propTypes = {
 	required: PropTypes.bool,
 	disabled: PropTypes.bool,
 	min: PropTypes.string,
+	max: PropTypes.string,
 	pattern: PropTypes.string,
 };
 
@@ -73,6 +76,7 @@ InputForm.defaultProps = {
 	onBlur: null,
 	required: false,
 	pattern: null,
+	max: null,
 };
 
 export default InputForm;

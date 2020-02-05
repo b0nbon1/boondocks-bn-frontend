@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from 'react-redux'; 
 import {
 	cleanup,
 	fireEvent,
@@ -81,6 +82,10 @@ describe("User should be be able to view and edit profile", () => {
       username: 'Bonvic',
     });
     serverSocket.emit('authentication_error', 'please login again');
+    serverSocket.emit('new_comment', {messages: 'new comment here'});
+    serverSocket.emit('new_request', {messages: 'new request here'});
+    serverSocket.emit('request_approved_or_rejected', {messages: 'your request was approved'});
+    serverSocket.emit('edited_request', {messages: 'your request was edited'});
 
     const [ textArea, toggleChatBox, sendBtn ]= await waitForElement(
 			() => [
