@@ -13,7 +13,11 @@ import {
 	createATrip,
 } from '../../../lib/services/createRequest.service';
 import { transformProfile } from '../profile/profileActions';
-import { updateUserProfile } from '../../../lib/services/user.service';
+import {
+	getUserProfile,
+	updateUserProfile,
+} from '../../../lib/services/user.service';
+import ACTION_TYPES from '../profile/profileTypes';
 import { getRatingData } from '../accomodations/rateAccomodationActions';
 
 const fetchCreateTripData = () => async dispatch => {
@@ -40,7 +44,34 @@ const createTrip = (userRequest, endpoint, profile) => async dispatch => {
 
 	const userProfile = transformProfile(profile, dispatch);
 
+	if (!userProfile) {
+		dispatch(actionFunc(BUTTON_LOADING, false));
+		return false;
+	}
 	await updateUserProfile(userProfile);
+
+	const profileData = await getUserProfile(userId);
+
+	const updatedProfile = profileData.data.data;
+	dispatch(
+		actionFunc(ACTION_TYPES.SAVE_PROFILE_SUCCESS, {
+			updatedProfile: {
+				...(!updatedProfile.remember
+					? {
+							lineManager:
+								updatedProfile.lineManager === 'none'
+									? 0
+									: updatedProfile.lineManager,
+							email: updatedProfile.email,
+							remember: updatedProfile.remember,
+					  }
+					: updatedProfile),
+				birthDate:
+					updatedProfile.birthDate && updatedProfile.birthDate.split('T')[0],
+			},
+			userId,
+		}),
+	);
 
 	try {
 		const res = await createATrip(userRequest, endpoint);

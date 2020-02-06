@@ -45,14 +45,7 @@ export class TravelProfile extends Component {
 			return <div>Please Wait....</div>;
 		}
 
-		let { profile } = this.props;
-		if (!props.profile.remember && !props.isEditing) {
-			profile = {
-				lineManager: props.profile.lineManager,
-				email: props.profile.email,
-				remember: props.profile.remember,
-			};
-		}
+		const { profile } = this.props;
 
 		return (
 			<div>
@@ -83,7 +76,7 @@ export class TravelProfile extends Component {
 						)}
 						<SelectInput
 							name='gender'
-							value={state.gender || profile.gender || ''}
+							value={profile.gender || 0}
 							label='Gender'
 							placeholder='Select Gender'
 							option={profileSelect.gender}
@@ -93,20 +86,14 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'gender',
 									value: event.target.value,
-								})
-							}
+								})}
 							classNames='form-control form-control-sm'
 						/>
 
 						<SelectInput
 							name='lineManager'
-							value={
-								state.lineManager ||
-								profile.lineManager.id ||
-								profile.lineManager
-							}
+							value={profile.lineManager.id || 0}
 							label='Line Manager'
-							selected={state.gender || ''}
 							placeholder='Line Manager'
 							option={managers.map(manager => {
 								const obj = {};
@@ -122,14 +109,14 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'lineManager',
 									value: event.target.value,
-								})
-							}
-							classNames="form-control form-control-sm"
+								})}
+							classNames={`form-control form-control-sm ${errors.lineManagerError &&
+								'is-invalid'}`}
 						/>
 
 						<SelectInput
 							name='preferredCurrency'
-							value={state.preferredCurrency || profile.preferredCurrency || ''}
+							value={profile.preferredCurrency || 0}
 							label='Preferred Currency'
 							placeholder='Preferred Currency'
 							option={profileSelect.preferredCurrency}
@@ -145,7 +132,7 @@ export class TravelProfile extends Component {
 						/>
 						<SelectInput
 							name='preferredLanguage'
-							value={state.preferredLanguage || profile.preferredLanguage || ''}
+							value={profile.preferredLanguage || 0}
 							label='Preferred Language'
 							placeholder='Preferred Language'
 							option={profileSelect.language}
@@ -200,7 +187,6 @@ TravelProfile.propTypes = {
 	managers: propTypes.instanceOf(Array).isRequired,
 	errors: propTypes.instanceOf(Object).isRequired,
 	saveData: propTypes.func.isRequired,
-	isEditing: propTypes.bool.isRequired,
 };
 
 export default TravelProfile;

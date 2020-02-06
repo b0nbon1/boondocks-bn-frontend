@@ -32,7 +32,8 @@ const Profile = ({ setIsEditing, profile, currentUser }) => {
 									setIsEditing(true);
 								}}
 							>
-								<i className='fa fa-cog fa-3x' />
+								<i className='fa fa-pencil-square-o fa-2x' />
+								<span> Edit Profile</span>
 							</Link>
 						)}
 					</div>
@@ -56,12 +57,12 @@ const Profile = ({ setIsEditing, profile, currentUser }) => {
 						</h5>
 
 						<Info
-							label='Enter Preferred Language'
+							label='Preferred Language'
 							value={profile.preferredLanguage}
 						/>
 
 						<Info
-							label='Enter Preferred Currency'
+							label='Preferred Currency'
 							value={profile.preferredCurrency}
 						/>
 					</div>

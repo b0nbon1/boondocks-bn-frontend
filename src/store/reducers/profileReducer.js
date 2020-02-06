@@ -59,13 +59,10 @@ const reducer = (state = initialState, { type, payload }) => {
 				fetchError: null,
 			};
 
-		case ACTION_TYPES.SAVE_PROFILE_SUCCESS:
+		case ACTION_TYPES.CLEAR_ERRORS:
 			return {
 				...state,
-				userProfile: payload.updatedProfile,
-				currentUserId: payload.userId,
-				isFetching: false,
-				fetchError: null,
+				errors: {},
 			};
 		default:
 			return state;
