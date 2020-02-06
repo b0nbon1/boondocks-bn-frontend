@@ -7,11 +7,17 @@ import { profileFields, profileSelect } from '../../utils/profileFields';
 import SelectInput from '../templates/SelectInput';
 import Toast from '../../lib/toast';
 import LoadingButton from '../templates/Button';
+import { clearErrors } from '../../store/actions/profile/profileActions';
 
 class EditProfile extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+
+	componentDidMount() {
+		const { props } = this;
+		props.clearErrors();
 	}
 
 	handleSave({ saveData, name, event }) {
@@ -53,7 +59,6 @@ class EditProfile extends Component {
 			Toast('error', 'Errors found, please review information');
 			return;
 		}
-
 		saveProfile(profile);
 	}
 
@@ -108,7 +113,7 @@ class EditProfile extends Component {
 						)}
 						<SelectInput
 							name='gender'
-							value={state.gender || profile.gender || ''}
+							value={profile.gender || 0}
 							label='Gender'
 							placeholder='Select Gender'
 							option={profileSelect.gender}
@@ -121,7 +126,7 @@ class EditProfile extends Component {
 
 						<SelectInput
 							name='lineManager'
-							value={state.lineManager || profile.lineManager.id || profile.lineManager || ''}
+							value={profile.lineManager.id || 0}
 							label='Line Manager'
 							selected={state.gender || ''}
 							placeholder='Line Manager'
@@ -142,7 +147,7 @@ class EditProfile extends Component {
 
 						<SelectInput
 							name='preferredCurrency'
-							value={state.preferredCurrency || profile.preferredCurrency || ''}
+							value={profile.preferredCurrency || 0}
 							label='Preferred Currency'
 							placeholder='Preferred Currency'
 							option={profileSelect.preferredCurrency}
@@ -153,7 +158,7 @@ class EditProfile extends Component {
 						/>
 						<SelectInput
 							name='preferredLanguage'
-							value={state.preferredLanguage || profile.preferredLanguage || ''}
+							value={profile.preferredLanguage || 0}
 							label='Preferred Language'
 							placeholder='Preferred Language'
 							option={profileSelect.language}
@@ -199,10 +204,13 @@ EditProfile.propTypes = {
 	loading: PropTypes.bool,
 	revertChanges: PropTypes.func.isRequired,
 	isEditing: PropTypes.bool.isRequired,
+	clearErrors: PropTypes.func.isRequired,
 };
 
 EditProfile.defaultProps = {
 	loading: null,
 };
 
-export default connect(mapStateToProps, {})(EditProfile);
+export default connect(mapStateToProps, {
+	clearErrors,
+})(EditProfile);

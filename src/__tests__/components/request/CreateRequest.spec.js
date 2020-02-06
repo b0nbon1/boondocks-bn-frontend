@@ -442,8 +442,10 @@ describe(' ', () => {
 		fireEvent.change(languageField, { target: { value: 'English'}});
 		fireEvent.blur(languageField);
 
-		fireEvent.change(managerField, { target: { value: 'none'}});
+		fireEvent.change(managerField, { target: { value: '0'}});
 		fireEvent.blur(managerField);
+
+		fireEvent.click(submitButton);
 
 		fireEvent.change(managerField, { target: { value: 1 }});
 		fireEvent.blur(managerField);

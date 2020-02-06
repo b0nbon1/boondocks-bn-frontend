@@ -22,14 +22,14 @@ function SelectInput({
 				multiple={multiple}
 				className={classNames}
 				name={name}
-				value={value}
+				defaultValue={value}
 				placeholder={placeholder}
 				onChange={onChange}
 				required={required}
 				onBlur={onBlur}
 			>
-				<option disabled value=''>
-					{!multiple && `select ${placeholder}`}
+				<option disabled value='0'>
+					{!multiple && `Select ${placeholder}`}
 				</option>
 				{option.map(({ value, name, id }) => (
 					<option key={id} value={value}>
@@ -71,7 +71,7 @@ SelectInput.defaultProps = {
 	onChange: null,
 	onBlur: null,
 	required: false,
-	value: '',
+	value: 0,
 	error: null,
 	multiple: false,
 };

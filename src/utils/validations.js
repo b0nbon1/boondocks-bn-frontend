@@ -60,8 +60,8 @@ export const isNotEmpty = value => {
 	return value.trim() !== '';
 };
 
-export const isValidId = value => {
-	return /^[0-9]+$/.test(value) && value > 0;
+export const isValidId = () => {
+	return true;
 };
 
 export const isPhoneNumber = value => {

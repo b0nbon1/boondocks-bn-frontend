@@ -51,7 +51,7 @@ export class CreateRequest extends Component {
 		props.renderPageLoadingSpinner();
 		await props.fetchCreateTripData();
 		const user = JSON.parse(localStorage.getItem('bn_user_data'));
-		props.fetchUserProfile(user.userId);
+		props.fetchUserProfile(user.userId, true);
 		props.closePageLoadingSpinner();
 	}
 

@@ -309,7 +309,6 @@ describe(' ', () => {
       getByTestId('submitInput'),
       getByTestId('ratingSelect'),
     ]);
-
     fireEvent.change(selectRoomField, {target:{value: 5}});
     fireEvent.click(submitButton);
   });

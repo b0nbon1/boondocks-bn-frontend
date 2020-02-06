@@ -26,11 +26,7 @@ describe('Validation logic', () => {
 	});
 
 	it('isValidId() should return false on invalid database ID', () => {
-		expect(isValidId('request')).toEqual(false);
-	});
-
-	it('isValidId() should return false on when ID is less than 1', () => {
-		expect(isValidId(0)).toEqual(false);
+		expect(isValidId(1)).toEqual(true);
 	});
 
 	it('isPhoneNumber() should return false on invalid phone number', () => {
