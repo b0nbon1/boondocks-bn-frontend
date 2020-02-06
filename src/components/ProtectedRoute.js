@@ -10,7 +10,6 @@ import { Redirect, Route } from 'react-router';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isValidElementType } from 'react-is';
 import JWTDecode from 'jwt-decode';
 import toast from '../lib/toast';
 import setAuthenticate from '../store/actions/authenticateAction';
@@ -22,6 +21,7 @@ export const ProtectedRoute = ({
 	...rest
 }) => {
 	setAuthState(true);
+
 	const {search} = rest.location;
 
 	const hasToken = search.includes('?token=');
@@ -37,37 +37,25 @@ export const ProtectedRoute = ({
 	}
 
 	const isAuthenticated = !!localStorage.bn_user_data || (hasToken && (nowTimeStampSecond - userData.iat < 3));
-
 	!isAuthenticated && toast('error', 'You need to be logged in');
+
 
 	return (
 		<Route
 			data-test='protected-route'
-			render={props =>
-				isAuthenticated ? (
-					<Component {...props} />
-				) : (
-					<Redirect
-						to={{ pathname: '/login', state: { from: props.location } }}
-					/>
-				)}
+			render={props => ({
+					"1": <Component {...props} />,
+					"0": <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
+				}[`${isAuthenticated * 1}`]
+			)}
 			{...rest}
 		/>
 	);
 };
 
 ProtectedRoute.propTypes = {
-	component: (props, propName) => {
-		if (props[propName] && !isValidElementType(props[propName])) {
-			return new Error(
-				`Invalid prop 'component' supplied to 'Route':
-				 the prop is not a valid React component`,
-			);
-		}
-	},
-	location: PropTypes.shape({
-		pathname: PropTypes.string.isRequired,
-	}),
+	component: PropTypes.object,
+	location: PropTypes.shape({ pathname: PropTypes.string.isRequired }),
 	setAuthState: PropTypes.func.isRequired,
 };
 

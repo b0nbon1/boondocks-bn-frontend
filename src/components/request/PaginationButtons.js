@@ -140,14 +140,14 @@ export const handleMoveRight = (
 /**
  * Pagination buttons
  * @param onPageChanged
- * @param allRequests
+ * @param allListables
  * @param pageNeighbours
  * @returns {*}
  * @constructor
  */
-const PaginationButtons = ({ onPageChanged, allRequests, pageNeighbours }) => {
+const PaginationButtons = ({ onPageChanged, allListables, pageNeighbours }) => {
 	const { pageLimit } = useSelector(state => state.requestPageLimitState);
-	const totalRecords = allRequests.length;
+	const totalRecords = allListables.length;
 	pageNeighbours = Math.max(0, Math.min(pageNeighbours, 2));
 	const [currentPage, setCurrentPage] = React.useState(1);
 	const totalPages = Math.ceil(totalRecords / pageLimit);
@@ -161,7 +161,7 @@ const PaginationButtons = ({ onPageChanged, allRequests, pageNeighbours }) => {
 			setCurrentPage,
 			onPageChanged,
 		);
-	}, [allRequests, pageLimit]);
+	}, [allListables, pageLimit]);
 
 	const allPages = getAllPages(pageNeighbours, totalPages, currentPage);
 
@@ -246,17 +246,7 @@ const PaginationButtons = ({ onPageChanged, allRequests, pageNeighbours }) => {
 
 PaginationButtons.propTypes = {
 	pageNeighbours: PropTypes.number,
-	allRequests: PropTypes.arrayOf(
-		PropTypes.shape({
-			id: PropTypes.number,
-			'': PropTypes.string,
-			names: PropTypes.string,
-			status: PropTypes.string,
-			type: PropTypes.string,
-			createdAt: PropTypes.string,
-			updatedAt: PropTypes.string,
-		}).isRequired,
-	).isRequired,
+	allListables: PropTypes.array.isRequired,
 	onPageChanged: PropTypes.func.isRequired,
 };
 

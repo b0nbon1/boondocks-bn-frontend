@@ -20,7 +20,7 @@ import {
 	SET_REQUEST_PAGE_LIMIT,
 } from '../../store/actions/types';
 import RequestSearchForm from './RequestSearchForm';
-import setRequestsList from '../../store/actions/requestListAction';
+import { setRequestsList } from '../../store/actions/listAction';
 
 /**
  * Request Header

@@ -32,23 +32,32 @@ export const requestSearch = ({
 		if (isManager) {
 			finalData.push(
 				...data.data.map(
-					({ id, status, type, updatedAt, firstName, lastName, reason }) => ({
-						id,
+					({
+						requestId,
+						status,
+						type,
+						updatedAt,
+						firstName,
+						lastName,
+						reason,
+					}) => ({
+						id: requestId,
 						'': flInitials(firstName, lastName),
 						names: flNames(firstName, lastName),
 						status,
 						type,
-						updatedAt,
 						reason,
+						updatedAt,
 					}),
 				),
 			);
 		} else {
 			finalData.push(
-				...data.data.map(({ id, status, type, updatedAt }) => ({
-					id,
+				...data.data.map(({ requestId, status, type, updatedAt, reason }) => ({
+					id: requestId,
 					status,
 					type,
+					reason,
 					updatedAt,
 				})),
 			);

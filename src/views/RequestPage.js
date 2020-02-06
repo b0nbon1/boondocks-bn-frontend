@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import RequestHeader from '../components/request/RequestHeader';
 import RequestPagination from '../components/request/RequestPagination';
 import RequestTable from '../components/request/RequestTable';
-import { formatIsoDate } from '../lib/time';
+import { formatToTime } from '../lib/time';
 
 /**
  * Requests page view
@@ -20,7 +20,7 @@ export const RequestPage = ({ requests }) => (
 				requests={[
 					...requests.map(item => ({
 						...item,
-						updatedAt: item.updatedAt && formatIsoDate(item.updatedAt),
+						updatedAt: item.updatedAt && formatToTime(item.updatedAt),
 					})),
 				]}
 			/>
@@ -32,8 +32,8 @@ export const RequestPage = ({ requests }) => (
 RequestPage.propTypes = { requests: PropTypes.array };
 RequestPage.defaultProps = { requests: null };
 
-export const mapStateToProps = ({ requestListState: { requests } }) => ({
-	requests,
+export const mapStateToProps = state => ({
+	requests: state.listState.requests,
 });
 
 export default connect(mapStateToProps)(RequestPage);
