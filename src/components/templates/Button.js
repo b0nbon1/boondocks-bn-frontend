@@ -27,11 +27,11 @@ const LoadingButton = ({
 	return (
 		<button
 			data-test='button'
-			data-testid={testId}
 			className={`form-group ${classNames}`}
 			type='submit'
 			onClick={onClick}
 			hidden={hidden}
+			data-testid={testId}
 		>
 			{value}
 		</button>

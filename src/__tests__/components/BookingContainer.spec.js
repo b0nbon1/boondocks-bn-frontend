@@ -24,7 +24,7 @@ import {
 } from '../../lib/services/rating.service';
 
 global.localStorage = localStorage;
-jest.mock('universal-cookie', () => jest.fn());
+jest.mock('universal-cookie');
 jest.mock('../../lib/services/accommodation.service');
 jest.mock('../../lib/services/booking.service');
 jest.mock('../../lib/services/rating.service');
@@ -50,7 +50,6 @@ afterEach(() => {
 	global.localStorage.clear();
 	localStorage.store = {};
 	MockDate.reset();
-
 });
 
 const hotel = {

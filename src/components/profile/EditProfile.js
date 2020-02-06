@@ -21,6 +21,10 @@ class EditProfile extends Component {
 		});
 	}
 
+	componentWillUnmount() {
+		this.setState()
+	}
+
 	/**
 	 * Save user input to the local state
 	 * @param event
@@ -38,7 +42,7 @@ class EditProfile extends Component {
 		});
 	}
 
-	handleSaveChanges({ profile, saveProfile, errors, history, isEditing }) {
+	handleSaveChanges({ profile, saveProfile, errors }) {
 		let error;
 		Object.keys(errors).forEach(key => {
 			if (errors[key] !== null) {

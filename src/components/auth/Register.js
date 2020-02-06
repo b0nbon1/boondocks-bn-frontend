@@ -33,12 +33,14 @@ export class Register extends Component {
 	handleSubmit(event) {
 		event.preventDefault();
 		const { firstName, lastName, email, password } = this.state;
-		const { props } = this;
-
-
+		this.setState({
+			checkError: 'was-validated',
+		});
+		if (event.target.checkValidity()) {
+			const { props } = this;
 			const data = { firstName, lastName, email, password };
 			props.signup(data);
-
+		}
 	}
 
 	render() {

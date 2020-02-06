@@ -185,7 +185,6 @@ const saveProfile = userProfile => async dispatch => {
 
 	const { userId } = JSON.parse(localStorage.getItem('bn_user_data'));
 	const profileData = await getUserProfile(userId);
-
 	const updatedProfile = profileData.data.data;
 	dispatch(
 		actionFunc(ACTION_TYPES.SAVE_PROFILE_SUCCESS, {

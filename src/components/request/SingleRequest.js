@@ -24,7 +24,6 @@ const SingleRequest = ({ request, loading, changeStatus }) => {
 			approvePopupVisibility: true,
 		});
 	};
-
 	const cancel = () => {
 		setPopUpState({
 			approvePopupVisibility: false,

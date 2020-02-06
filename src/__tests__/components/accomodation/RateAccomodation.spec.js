@@ -189,7 +189,7 @@ describe(' ', () => {
     global.$ = jest.fn((cb) => ({
       modal: jest.fn(cb => {jest.fn();}),
     }));
-  
+
     global.localStorage.setItem("bn_user_data", `{
       "email":"requestero@user.com",
       "name":"Requester",

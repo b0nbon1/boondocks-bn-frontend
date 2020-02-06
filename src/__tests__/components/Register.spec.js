@@ -79,7 +79,7 @@ describe('<Register /> Test Suite', () => {
       target: {checkValidity: () => true}
     });
     expect(handleSubmitSpy).toHaveBeenCalled();
-    expect(component.state()).toEqual({ firstName: 'Pierrette', lastName: 'Mastel', email: 'mastel@gmail.com', password: 'example@pass' });
+    expect(component.state()).toEqual({ checkError: 'was-validated', firstName: 'Pierrette', lastName: 'Mastel', email: 'mastel@gmail.com', password: 'example@pass' });
     expect(signupSpy).toHaveBeenCalled();
   });
 

@@ -1,14 +1,13 @@
 import React from 'react';
-import { render as reactRender } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import "@testing-library/jest-dom/extend-expect";
 import { BrowserRouter } from "react-router-dom";
 import  { SingleHotelPage, mapStateToProps } from '../../views/accomodations/SingleHotelPage';
-import { composeWithDevTools } from "redux-devtools-extension";
-import thunk from "redux-thunk";
-import { Provider } from 'react-redux';
-import { applyMiddleware, createStore } from "redux";
-import reducers from "../../store/reducers";
+import { wait } from '@testing-library/dom';
+import render from '../../__mocks__/render';
+import { cleanup } from '@testing-library/react';
+import localStorage from '../../__mocks__/LocalStorage';
+import { fetchFeedback } from '../../lib/services/feedbackService';
 import {
 	getBookingData,
 	getUserRatingData,
@@ -16,15 +15,13 @@ import {
 
 jest.mock('../../lib/services/booking.service');
 jest.mock('../../lib/services/rating.service');
-
-const render = (ui, initialState = {}, options = {}) => {
-	const store = createStore(reducers, initialState,
-		composeWithDevTools(applyMiddleware(thunk)));
-	const Providers = ({ children }) => (
-		<Provider store={store}>{children}</Provider>
-	);
-	return reactRender(ui, { wrapper: Providers, ...options });
-};
+jest.mock('../../lib/services/feedbackService');
+global.$ = jest.fn((cb) => ({
+  scrollTop: jest.fn(),
+  0: jest.fn(cb =>({
+    scrollHeight: '23'
+  })),
+}));
 
 global.localStorage = localStorage;
 
@@ -117,7 +114,49 @@ describe('Single Hotel page', () => {
   });
 
 	let props;
-	it('should render without error', () => {
+
+	const feedback = {
+		data: {
+			status: 'success',
+			message: 'Feedback retrieved successfully',
+			data: [
+				{
+					firstName: 'John',
+					lastName: 'Doe',
+					feedback: 'Your facilities were awesome, Great work!',
+					id: 26,
+					createdAt: '2020-01-31T08:33:19.561Z',
+				},
+				{
+					firstName: 'John1',
+					lastName: 'Doe1',
+					feedback: 'I had Amazing Experience, Great work!',
+					id: 25,
+					createdAt: '2020-01-31T08:31:03.884Z',
+				}
+			],
+		}
+	};
+	fetchFeedback.mockImplementation(() => Promise.resolve(feedback));
+	beforeEach(() => {
+		global.localStorage.setItem("bn_user_data", `{
+			"email":"requestero@user.com",
+			"name":"Requester",
+			"userId":2,
+			"verified":true,
+			"role":"requester",
+			"lineManagerId":7,
+			"iat":1578472431,
+			"exp":1578558831
+		}`);
+	});
+
+	afterEach(() => {
+		cleanup();
+		global.localStorage.clear();
+		localStorage.store = {};
+	});
+	it('should render without error', async () => {
 		props = {
       loading: false,
 			data:{
@@ -131,20 +170,32 @@ describe('Single Hotel page', () => {
 				status: 'available'
 			}]
 		},
-      status: 'success',
-      getHotel: jest.fn(id => id),
-			match: {
-				params: {
-					id: 1
-				}
+		feedback: [
+			{
+				firstName: 'John',
+				lastName: 'nz',
+				feedback: 'This is the feedback',
+				id: 1,
+				createdAt: '2019-02-02',
+			},
+		],
+		status: 'success',
+		getHotel: jest.fn(id => id),
+		match: {
+			params: {
+				id: 1
 			}
+    }
     }
     
     getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
     getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
     
 		const { getByTestId } = render(<BrowserRouter><SingleHotelPage {...props} /></BrowserRouter>);
-		expect(getByTestId('single-hotel')).toBeInTheDocument();
+		await wait(() => {
+			expect(getByTestId('single-hotel')).toBeInTheDocument();
+		})
+
 	});
 	it('should render nothing when loading', () => {
 		props = {
@@ -179,13 +230,22 @@ describe('Single Hotel page', () => {
 				status: 'reserved'
 			}]
 		},
-      status: 'success',
-      getHotel: jest.fn(id => id),
-			match: {
-				params: {
-					id: 1
-				}
+		feedback: [
+			{
+				firstName: 'John',
+				lastName: 'nz',
+				feedback: 'This is the feedback',
+				id: 1,
+				createdAt: '2019-02-02',
+			},
+		],
+		status: 'success',
+		getHotel: jest.fn(id => id),
+		match: {
+			params: {
+				id: 1
 			}
+		}
 		}
 		const { getByTestId } = render(<BrowserRouter><SingleHotelPage {...props} /></BrowserRouter>);
 		expect(getByTestId('single-hotel')).toBeInTheDocument();
@@ -197,10 +257,13 @@ describe('Single Hotel page', () => {
           data: null,
           status: '',
         },
+			feedbackState: {
+				feedback: {},
+			},
       loadingState: { buttonLoading: null },
     };
     expect(mapStateToProps(initialState))
-    .toEqual({ data: null, status: '', loading: null });
+    .toEqual({ data: null, status: '', loading: null, feedback: {} });
   });
 
 });
