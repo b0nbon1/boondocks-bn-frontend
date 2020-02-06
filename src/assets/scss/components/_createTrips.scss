@@ -63,7 +63,8 @@ div.trips-date-divs:nth-child(3) > div:nth-child(3) > label:nth-child(1),
 .createTripInputs{
   height: 2.5rem;
 }
-.center-trip-radio-buttons div.form-check:nth-child(1){
+.center-trip-radio-buttons div.form-check:nth-child(1),
+div.form-check:nth-child(2){
   margin-right: 6.25rem;
 }
 .deleteTripForm{
