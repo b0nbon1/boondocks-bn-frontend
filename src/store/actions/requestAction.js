@@ -22,32 +22,34 @@ export const getRequests = status => async dispatch => {
 			requestAPIPath + (status !== 'all' ? `?status=${status}` : ''),
 		);
 
+		const requestData = data.data.sort(
+			(a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+		);
+
 		dispatch(
 			actionFunc(
 				REQUEST_FETCH_SUCCESS,
-				data.data
-					.reverse()
-					.map(({ id, status, type, updatedAt, user, trips }) => {
-						let requestData = {
-							status,
-							type,
-							reason: trips.map(trip => trip.reason)[0],
-							updatedAt,
-						};
+				requestData.map(({ id, status, type, updatedAt, user, trips }) => {
+					let requestData = {
+						status,
+						type,
+						reason: trips.map(trip => trip.reason)[0],
+						updatedAt,
+					};
 
-						if (user) {
-							requestData = {
-								...{
-									'': `${user.firstName.split('')[0]}${
-										user.lastName.split('')[0]
-									}`,
-									names: `${user.firstName} ${user.lastName}`,
-								},
-								...requestData,
-							};
-						}
-						return { id, ...requestData };
-					}),
+					if (user) {
+						requestData = {
+							...{
+								'': `${user.firstName.split('')[0]}${
+									user.lastName.split('')[0]
+								}`,
+								names: `${user.firstName} ${user.lastName}`,
+							},
+							...requestData,
+						};
+					}
+					return { id, ...requestData };
+				}),
 			),
 		);
 	} catch (error) {

@@ -21,10 +21,10 @@ export class Notifications extends Component {
 		props.notification();
 	}
 
-	handleRedirect(id) {
+	handleRedirect(requestId, notificationId) {
 		const { history, markOneAsRead } = this.props;
-		history.push(`/request/${id}`);
-		markOneAsRead(id);
+		markOneAsRead(notificationId);
+		history.push(`/request/${requestId}`);
 	}
 
 	render() {
@@ -67,7 +67,10 @@ export class Notifications extends Component {
 										className={`notification-box${evenNotificationClass(idx)}`}
 										key={notificationItem.id}
 										onClick={() => {
-											return this.handleRedirect(notificationItem.requestId);
+											return this.handleRedirect(
+												notificationItem.requestId,
+												notificationItem.id,
+											);
 										}}
 									>
 										<div className='row'>

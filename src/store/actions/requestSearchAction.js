@@ -2,7 +2,6 @@
 import actionFunc from '../../utils/actionFunc';
 import { LOADING, REQUEST_SEARCH_ERROR, REQUEST_SEARCH_SUCCESS } from './types';
 import apiCall from '../../utils/api';
-import axiosErrorHandler from '../../lib/services/axiosErrorHandler';
 
 export const flNames = (firstName, lastName) =>
 	`${firstName && firstName} ${lastName && lastName}`;
@@ -24,9 +23,7 @@ export const requestSearch = ({
 	if (isManager) searchTerm = `byLineManager=true&${searchTerm}`;
 
 	try {
-		const { data } = await apiCall
-			.get(`/search/requests?${searchTerm}`)
-			.catch(axiosErrorHandler);
+		const { data } = await apiCall.get(`/search/requests?${searchTerm}`);
 		const finalData = [];
 
 		if (isManager) {
@@ -62,7 +59,12 @@ export const requestSearch = ({
 				})),
 			);
 		}
-		dispatch(actionFunc(REQUEST_SEARCH_SUCCESS, finalData));
+
+		const searchData = finalData.sort(
+			(a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+		);
+
+		dispatch(actionFunc(REQUEST_SEARCH_SUCCESS, searchData));
 		dispatch(actionFunc(LOADING, false));
 	} catch (error) {
 		dispatch(actionFunc(REQUEST_SEARCH_ERROR, error));
