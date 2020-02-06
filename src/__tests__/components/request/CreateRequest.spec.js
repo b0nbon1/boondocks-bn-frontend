@@ -18,13 +18,17 @@ import CreateRequestPage from '../../../views/requests/CreateRequestPage';
 import { BrowserRouter } from "react-router-dom";
 import { getLocationsWithHotels, getLocations, createATrip } from "../../../lib/services/createRequest.service";
 import { getUserProfile, getUsers } from '../../../lib/services/user.service';
+import {
+	getBookingData,
+	getUserRatingData,
+} from '../../../lib/services/rating.service';
 
 global.localStorage = localStorage;
-
-
 jest.mock("universal-cookie");
 jest.mock("../../../lib/services/createRequest.service");
 jest.mock("../../../lib/services/user.service");
+jest.mock('../../../lib/services/booking.service');
+jest.mock('../../../lib/services/rating.service');
 
 jest.mock("react-select", () => ({ options, value, onChange }) => {
   function handleChange(event) {
@@ -201,6 +205,74 @@ const responseData = {
 			createdAt: '2020-01-23T12:53:10.588Z',
 			updatedAt: '2020-01-23T12:53:10.588Z',
 		},
+	},
+};
+
+const bookingDataResponse = {
+	data: {
+		status: 'success',
+		message: 'Bookings retrieved successfully',
+		data: [
+			{
+				id: 18,
+				roomId: 6,
+				roomStatus: 'reserved',
+				firstName: 'Requester',
+				lastName: 'User',
+				arrivalDate: '2020-02-03T00:00:00.000Z',
+				leavingDate: '2020-02-07T00:00:00.000Z',
+				createdAt: '2020-01-31T08:30:21.576Z',
+				hotel: 'Marriot Hotel',
+				room: 'Cheetah',
+				hotelId: 1,
+			},
+			{
+				id: 15,
+				roomId: 10,
+				roomStatus: 'reserved',
+				firstName: 'Requester',
+				lastName: 'User',
+				arrivalDate: '2020-01-30T00:00:00.000Z',
+				leavingDate: '2020-01-31T00:00:00.000Z',
+				createdAt: '2020-01-30T13:07:17.918Z',
+				hotel: 'Best Western Hotel',
+				room: 'Rain',
+				hotelId: 2,
+			},
+		],
+	},
+};
+
+const ratingDataResponse = {
+	data: {
+		status: 'success',
+		message: 'Hotel ratings fetched successfully',
+		data: [
+			{
+				id: 18,
+				hotelId: 4,
+				userId: 2,
+				rating: 4,
+				createdAt: '2020-01-30T13:29:53.571Z',
+				updatedAt: '2020-01-30T13:30:01.477Z',
+			},
+			{
+				id: 17,
+				hotelId: 2,
+				userId: 2,
+				rating: 4,
+				createdAt: '2020-01-30T13:13:53.368Z',
+				updatedAt: '2020-01-31T07:39:11.490Z',
+			},
+			{
+				id: 20,
+				hotelId: 1,
+				userId: 2,
+				rating: 4,
+				createdAt: '2020-01-31T08:30:51.807Z',
+				updatedAt: '2020-01-31T08:31:18.034Z',
+			},
+		],
 	},
 };
 
@@ -387,7 +459,9 @@ describe(' ', () => {
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
     createATrip.mockImplementation(() => Promise.resolve(responseData));
 		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
-		getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
+    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
 
 
 		const initialState = {
@@ -437,7 +511,9 @@ describe(' ', () => {
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
     createATrip.mockImplementation(() => Promise.resolve(responseData));
 		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
-		getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
+    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
 
 
     const initialState = {

@@ -14,6 +14,7 @@ import {
 } from '../../../lib/services/createRequest.service';
 import { transformProfile } from '../profile/profileActions';
 import { updateUserProfile } from '../../../lib/services/user.service';
+import { getRatingData } from '../accomodations/rateAccomodationActions';
 
 const fetchCreateTripData = () => async dispatch => {
 	try {
@@ -35,6 +36,7 @@ const fetchCreateTripData = () => async dispatch => {
 
 const createTrip = (userRequest, endpoint, profile) => async dispatch => {
 	dispatch(actionFunc(BUTTON_LOADING, true));
+	const { userId } = JSON.parse(localStorage.bn_user_data);
 
 	const userProfile = transformProfile(profile, dispatch);
 
@@ -43,6 +45,8 @@ const createTrip = (userRequest, endpoint, profile) => async dispatch => {
 	try {
 		const res = await createATrip(userRequest, endpoint);
 		dispatch(actionFunc(CREATE_TRIP_SUCCESS, res.data.message));
+		// trigger re-render: to revisit
+		dispatch(getRatingData(userId));
 		toast('success', 'Trip request created successfully');
 	} catch (error) {
 		dispatch(actionFunc(CREATE_TRIP_FAILURE, error.response.data.message));

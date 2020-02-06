@@ -1,9 +1,23 @@
 import React from 'react';
 import { BrowserRouter } from "react-router-dom";
 import '@testing-library/jest-dom/extend-expect';
-import { render } from "@testing-library/react";
+import { render as reactRender } from "@testing-library/react";
 import Hotel from '../../../components/accomodations/Hotel';
 import localStorage from '../../../__mocks__/LocalStorage';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore } from "redux";
+import reducers from "../../../store/reducers";
+import { composeWithDevTools } from "redux-devtools-extension";
+import thunk from "redux-thunk";
+
+const render = (ui, initialState = {}, options = {}) => {
+	const store = createStore(reducers, initialState,
+		composeWithDevTools(applyMiddleware(thunk)));
+	const Providers = ({ children }) => (
+		<Provider store={store}>{children}</Provider>
+	);
+	return reactRender(ui, { wrapper: Providers, ...options });
+};
 
 jest.mock('../../../components/accomodations/LikeUnlike', () => {
   const ComponentToMock = () => <div />;
