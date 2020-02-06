@@ -5,6 +5,11 @@ import { render } from "@testing-library/react";
 import Hotel from '../../../components/accomodations/Hotel';
 import localStorage from '../../../__mocks__/LocalStorage';
 
+jest.mock('../../../components/accomodations/LikeUnlike', () => {
+  const ComponentToMock = () => <div />;
+  return ComponentToMock;
+})
+
 describe('<Hotel /> Test suite', () => {
   let props;
   beforeEach(() => {

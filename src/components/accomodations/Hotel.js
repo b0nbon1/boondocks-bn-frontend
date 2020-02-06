@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import StarRatings from 'react-star-ratings';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import hotelPlaceholder from '../../assets/images/hotel-placeholder.jpeg';
+import hotelPlaceholder from '../../assets/images/hotel-placeholder.png';
 import checkRole from '../../utils/checkRole';
+import LikeUnlike from './LikeUnlike';
 
 export default function Hotel({ data }) {
 	const [role, setRole] = useState(null);
@@ -20,6 +21,7 @@ export default function Hotel({ data }) {
 		description,
 		likesCount,
 		unLikesCount,
+		likes,
 		location,
 		street,
 	} = data;
@@ -50,12 +52,12 @@ export default function Hotel({ data }) {
 					{`  ${street} ${location.city}, ${location.country}`}
 				</p>
 				<div className='d-inline-block p-2 w-100'>
-					<i className='fa fa-thumbs-o-up mr-2' aria-hidden='true'>
-						<span className='m-2'>{likesCount}</span>
-					</i>
-					<i className='fa fa-thumbs-o-down' aria-hidden='true'>
-						<span className='m-2'>{unLikesCount}</span>
-					</i>
+				<LikeUnlike
+						id={id}
+						likesCount={likesCount}
+						unLikesCount={unLikesCount}
+						likes={likes}
+					/>
 					{role ? (
 						<Link
 							to={`/hotel/${id}/room/create`}
