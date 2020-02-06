@@ -38,8 +38,11 @@ export class CreateRequest extends Component {
 					leavingFrom: null,
 					goingTo: null,
 					hotel: null,
+					hotels: null,
 					rooms: null,
 					reason: '',
+					myRef1: React.createRef(),
+					leavingFromRef1: React.createRef(),
 				},
 			],
 			checkSubmit: false,
@@ -58,8 +61,6 @@ export class CreateRequest extends Component {
 	createUI(allLocationOptions) {
 		const { state } = this;
 		const { tripType } = state;
-		const returnDateCheck = new Date();
-		returnDateCheck.setDate(returnDateCheck.getDate() + 1);
 
 		return state.allTrips.map((el, i) => (
 			// eslint-disable-next-line react/no-array-index-key
@@ -110,6 +111,7 @@ export class CreateRequest extends Component {
 								defaultValue={el.leavingFrom || ''}
 								required
 								data-testid='leavingFrom'
+								ref={el[`leavingFromRef${el.id}`]}
 							>
 								<option value=''>Choose</option>
 								<optgroup>{allLocationOptions}</optgroup>
@@ -143,9 +145,10 @@ export class CreateRequest extends Component {
 							className='form-control createTripInputs'
 							name='hotel'
 							data-testid='hotel'
+							hidden={el.hotels === null}
 						>
 							<optgroup>
-								<option key='sH' value=''>
+								<option key='someUniqueKey' value=''>
 									Select hotel
 								</option>
 								{el.hotels &&
@@ -160,20 +163,33 @@ export class CreateRequest extends Component {
 					<span />
 					<div>
 						{el.availableRooms ? (
-							<Select
-								isMulti
-								options={el.availableRooms}
-								onChange={event => this.handleChangeRooms(event, el)}
-								data-testid='room'
-								placeholder='Select Room'
-							/>
+							<div hidden={el.hotels === null}>
+								<Select
+									isMulti
+									options={el.availableRooms}
+									onChange={event => this.handleChangeRooms(event, el)}
+									data-testid='room'
+									placeholder='Select Room'
+									ref={el[`myRef${el.id}`]}
+								/>
+								<input
+									tabIndex={-1}
+									autoComplete='off'
+									style={{ opacity: 0, height: 0 }}
+									defaultValue={el.rooms || ''}
+									required={el.hotel !== null ? 'required' : false}
+								/>
+							</div>
 						) : (
-							<Select
-								isMulti
-								options={[]}
-								onChange={event => this.handleChangeRooms(event, el)}
-								data-testid='room'
-							/>
+							<div hidden={el.hotels === null}>
+								<Select
+									isMulti
+									options={[]}
+									onChange={event => this.handleChangeRooms(event, el)}
+									data-testid='room'
+									ref={el[`myRef${el.id}`]}
+								/>
+							</div>
 						)}
 					</div>
 				</div>
@@ -274,9 +290,17 @@ export class CreateRequest extends Component {
 	}
 
 	handleChangeGoingTo(event, element) {
+		element.hotel = null;
+		element.rooms = null;
 		const { name, value } = event.target;
 		const { state } = this;
 		const currentValuesInState = [...state.allTrips];
+		const currentRef = `myRef${element.id}`;
+		const node = element[currentRef].current;
+
+		if (node !== null) {
+			node.state.value = '';
+		}
 
 		const currentFormFieldWrapper = currentValuesInState.find(
 			forms => forms.id === element.id,
@@ -308,14 +332,26 @@ export class CreateRequest extends Component {
 			}
 			currentFormFieldWrapper.hotels = hotelOptions;
 		}
+		currentFormFieldWrapper.availableRooms = [];
 		currentValuesInState.splice(currentFormIndex, 1, currentFormFieldWrapper);
 		this.setState({ allTrips: currentValuesInState });
 	}
 
 	handleChangeHotel(event, element) {
-		const { name, value } = event.target;
+		element.rooms = null;
+		const { name } = event.target;
+		let { value } = event.target;
+		if (value === '') {
+			value = null;
+		}
 		const { state } = this;
 		const currentValuesInState = [...state.allTrips];
+		const currentRef = `myRef${element.id}`;
+		const node = element[currentRef].current;
+
+		if (node !== null) {
+			node.state.value = '';
+		}
 
 		const currentFormFieldWrapper = currentValuesInState.find(
 			forms => forms.id === element.id,
@@ -382,8 +418,13 @@ export class CreateRequest extends Component {
 							prevState.allTrips[prevState.allTrips.length - 1].goingTo,
 						goingTo: null,
 						hotel: null,
+						hotels: null,
 						rooms: null,
 						reason: null,
+						[`myRef${prevState.allTrips[prevState.allTrips.length - 1].id +
+							1}`]: React.createRef(),
+						[`leavingFromRef${prevState.allTrips[prevState.allTrips.length - 1]
+							.id + 1}`]: React.createRef(),
 					},
 				],
 			};
@@ -392,8 +433,21 @@ export class CreateRequest extends Component {
 
 	removeClick(i) {
 		const { state } = this;
-		const allTrips = [...state.allTrips];
+		const { allTrips } = state;
+
+		// only delete form if there is more than 1
 		if (allTrips.length > 1) {
+			// prevent setting goingTo to null on form deletion
+			if (allTrips.length > 2 && i !== allTrips.length - 1) {
+				const nextFormFieldWrapper = allTrips[i];
+				const prevGoingToSelect =
+					nextFormFieldWrapper[`leavingFromRef${nextFormFieldWrapper.id}`]
+						.current;
+
+				if (prevGoingToSelect !== null) {
+					prevGoingToSelect.value = '';
+				}
+			}
 			allTrips.splice(i, 1);
 			this.setState({ allTrips });
 		}
@@ -419,7 +473,7 @@ export class CreateRequest extends Component {
 			return;
 		}
 
-		if (formsArray.length === 1) {
+		if (formsArray.length === 1 && tripType !== 'multi-city') {
 			const thisFormState = formsArray[0];
 			const {
 				leavingFrom,
@@ -473,9 +527,10 @@ export class CreateRequest extends Component {
 					rooms,
 					reason,
 				} = element;
+
 				userRequest = {
 					type: 'one way',
-					leavingFrom: Number(leavingFrom),
+					leavingFrom: leavingFrom !== null ? Number(leavingFrom) : null,
 					goingTo: Number(goingTo),
 					travelDate,
 					reason,
