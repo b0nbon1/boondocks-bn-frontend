@@ -3,15 +3,18 @@ react/jsx-props-no-spreading,
 no-undef, import/no-extraneous-dependencies,
 no-unused-expressions,
 no-return-assign,
-prettier/prettier
+prettier/prettier,
+max-len
 */
 import { Redirect, Route } from 'react-router';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { isValidElementType } from 'react-is';
+import JWTDecode from 'jwt-decode';
 import toast from '../lib/toast';
 import setAuthenticate from '../store/actions/authenticateAction';
+import { storeToken } from '../helpers/authHelper';
 
 export const ProtectedRoute = ({
 	setAuthState,
@@ -19,7 +22,22 @@ export const ProtectedRoute = ({
 	...rest
 }) => {
 	setAuthState(true);
-	const isAuthenticated = !!localStorage.bn_user_data;
+	const {search} = rest.location;
+
+	const hasToken = search.includes('?token=');
+
+	const nowTimeStampSecond = Math.floor(Date.now() / 1000);
+
+	let userData;
+
+	if (hasToken) {
+		const token = search.split('?token=')[1];
+		storeToken(token);
+		userData = JWTDecode(token);
+	}
+
+	const isAuthenticated = !!localStorage.bn_user_data || (hasToken && (nowTimeStampSecond - userData.iat < 3));
+
 	!isAuthenticated && toast('error', 'You need to be logged in');
 
 	return (

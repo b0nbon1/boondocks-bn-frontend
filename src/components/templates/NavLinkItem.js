@@ -8,25 +8,28 @@ import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Notifications from '../Notifications';
+import { notification } from '../../store/actions/notificationAction';
 
-export const evenNotificationClass = idx => (idx % 2 === 1 ? ' bg-gray' : '');
-
-const NavLinkItem = ({
+export const NavLinkItem = ({
 	linkText,
 	linkRoute,
 	icon,
 	haspopup,
 	notifications,
 	newNotification,
+	readNotifications,
+	setNotifications,
 }) => {
 	const [unreadNotifications, setUnreadNotifications] = useState([]);
 
 	useEffect(() => {
+		if (haspopup) setNotifications();
+	}, [readNotifications]);
+
+	useEffect(() => {
 		if (notifications && notifications.data) {
 			setUnreadNotifications(
-				notifications.data.filter(
-					notification => notification.isRead === false,
-				),
+				notifications.data.filter(notif => notif.isRead === false),
 			);
 		}
 	}, [notifications]);
@@ -94,6 +97,8 @@ NavLinkItem.propTypes = {
 	haspopup: PropTypes.bool,
 	notifications: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 	newNotification: PropTypes.object,
+	readNotifications: PropTypes.object.isRequired,
+	setNotifications: PropTypes.func.isRequired,
 };
 
 NavLinkItem.defaultProps = {
@@ -105,9 +110,11 @@ NavLinkItem.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-	allAsReadState: state.markAllNotificationsAsReadState,
+	readNotifications: state.markAsReadState,
 	notifications: state.notificationState.data,
 	newNotification: state.updateNotificationState.newNotification,
 });
 
-export default connect(mapStateToProps)(NavLinkItem);
+const mapDispatchToProps = { setNotifications: notification };
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavLinkItem);

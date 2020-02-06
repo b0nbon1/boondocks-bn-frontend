@@ -8,10 +8,11 @@ import {
   markAllAsRead,
   notificationView
 } from "../../../lib/services/notificationService";
-import { waitForElement } from "@testing-library/dom";
+import { wait, waitForElement } from "@testing-library/dom";
 import localStorage from "../../../__mocks__/LocalStorage";
 
 jest.mock("../../../lib/services/notificationService");
+jest.mock("socket.io-client");
 
 const initialState = {
   notificationState: {
@@ -85,21 +86,20 @@ const initialState = {
         linkRoute: "/trip-request"
       },
       {
-        linkText: "Destinations",
-        linkRoute: "/destinations"
-      },
-      {
-        linkText: "Approved trips",
-        linkRoute: "/approved-trips"
-      },
-      {
         linkText: "Requests",
         linkRoute: "/requests"
+      },
+      {
+        linkText: "Booking",
+        linkRoute: "/booking"
       }
-    ]
+    ],
   },
   authState: {
     isAuthenticated: true
+  },
+  updateNotificationState: {
+    newNotification: null
   }
 };
 
@@ -117,50 +117,11 @@ notificationView.mockImplementation(() => Promise.resolve({
           "requestId": 1,
           "createdAt": "2020-01-23T11:36:42.470Z",
           "updatedAt": "2020-01-29T11:55:17.937Z"
-        },
-        {
-          "id": 4,
-          "userId": 2,
-          "type": "new_request",
-          "messages": "New Travel Requested",
-          "isRead": false,
-          "requestId": 4,
-          "createdAt": "2020-01-23T11:36:51.720Z",
-          "updatedAt": "2020-01-29T11:55:17.937Z"
-        },
-        {
-          "id": 3,
-          "userId": 2,
-          "type": "new_comment",
-          "messages": "New Comment on Travel Requested",
-          "isRead": false,
-          "requestId": 3,
-          "createdAt": "2020-01-23T11:36:48.851Z",
-          "updatedAt": "2020-01-29T11:55:17.937Z"
-        },
-        {
-          "id": 5,
-          "userId": 2,
-          "type": "request_approved_or_rejected",
-          "messages": "Travel Requested approved",
-          "isRead": false,
-          "requestId": 5,
-          "createdAt": "2020-01-23T11:36:54.791Z",
-          "updatedAt": "2020-01-29T11:55:17.937Z"
-        },
-        {
-          "id": 2,
-          "userId": 2,
-          "type": "edited_request",
-          "messages": "Travel Request edited",
-          "isRead": false,
-          "requestId": 2,
-          "createdAt": "2020-01-23T11:36:46.765Z",
-          "updatedAt": "2020-01-29T11:55:17.937Z"
         }]
     }
   }
 ));
+
 markAllAsRead.mockImplementation(() => Promise.resolve({
   data: {
     "status": "success",
@@ -186,18 +147,17 @@ afterEach(cleanup);
 
 describe("NavLinkItem template component", () => {
 
-  it("should display notification", () => {
-    const { notificationState, ...rest } = initialState;
+  it("should display \"No unread notifications\" when no notification is present", () => {
     const { getByText } = render(
       <BrowserRouter>
         <Navbar/>
       </BrowserRouter>,
-      { ...rest, notificationState: { data: null } }
+      { ...initialState, notificationState: { data: null } }
     );
     expect(getByText("No unread notifications")).toBeInTheDocument();
   });
 
-  it("should display notification", async () => {
+  it("should display \"Mark all as read\" when there are some notifications", async () => {
     const { getByText } = render(
       <BrowserRouter>
         <Navbar/>
@@ -205,12 +165,35 @@ describe("NavLinkItem template component", () => {
       initialState
     );
 
-    const notificationHeader = await waitForElement(() => getByText("Mark all as read"));
+    const notificationHeader = await waitForElement(
+      () => getByText("Mark all as read"));
+
+    notificationView.mockImplementation(() => Promise.resolve({
+        data: {
+          "status": "success",
+          "message": "Notifications fetched successfully",
+          "data": [
+            {
+              "id": 1,
+              "userId": 2,
+              "type": "new_request",
+              "messages": "New Travel Requested",
+              "isRead": true,
+              "requestId": 1,
+              "createdAt": "2020-01-23T11:36:42.470Z",
+              "updatedAt": "2020-01-29T11:55:17.937Z"
+            }]
+        }
+      }
+    ));
     fireEvent.click(notificationHeader);
-   expect(getByText("No unread notifications")).toBeInTheDocument();
+
+    await wait(() => {
+      expect(getByText("No unread notifications")).toBeInTheDocument();
+    });
   });
 
-  it("should display notification", () => {
+  it("should display \"Mark all as read\" when one notification was read and others are still there", () => {
     const { getByText } = render(
       <BrowserRouter>
         <Navbar/>
@@ -220,6 +203,6 @@ describe("NavLinkItem template component", () => {
 
     const notificationItem = getByText("New Travel Requested 1");
     fireEvent.click(notificationItem);
-   expect(getByText("Mark all as read")).toBeInTheDocument();
+    expect(getByText("Mark all as read")).toBeInTheDocument();
   });
 });

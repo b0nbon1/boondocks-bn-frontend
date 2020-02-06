@@ -25,10 +25,10 @@ import editRequestReducer from './editRequestReducer';
 import deleteCommentReducer from './deleteCommentReducer';
 import bookingReducer from './bookingReducer';
 import notificationReducer from './notificationReducer';
-import markAllNotificationsAsReadReducer from './markAllNotificationsAsReadReducer';
 import updateNotificationReducer from './updateNotificationReducer';
 import tripStatsReducer from './tripStatsReducer';
 import rateAccomodationReducer from './rateAccomodationReducer';
+import markAsReadReducer from './markAsReadReducer';
 import feedbackReducer from './feedbackReducer';
 
 const reducers = combineReducers({
@@ -58,8 +58,7 @@ const reducers = combineReducers({
 	deleteCommentState: deleteCommentReducer,
 	bookingState: bookingReducer,
 	notificationState: notificationReducer,
-	markAsReadState: notificationReducer,
-	markAllNotificationsAsReadState: markAllNotificationsAsReadReducer,
+	markAsReadState: markAsReadReducer,
 	updateNotificationState: updateNotificationReducer,
 	tripStatState: tripStatsReducer,
 	rateAccomodationState: rateAccomodationReducer,
