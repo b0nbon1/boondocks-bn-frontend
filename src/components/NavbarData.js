@@ -4,10 +4,6 @@ const navItemObjects = {
 			linkText: 'Home',
 			linkRoute: '/home',
 		},
-		{
-			linkText: 'Request a trip',
-			linkRoute: '/trip-request',
-		},
 	],
 	super_administrator: [
 		{
@@ -33,6 +29,10 @@ const navItemObjects = {
 		},
 	],
 	requester: [
+		{
+			linkText: 'Request a trip',
+			linkRoute: '/trip-request',
+		},
 		{
 			linkText: 'Requests',
 			linkRoute: '/requests',
