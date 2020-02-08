@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import Proptypes from 'prop-types';
 import LoginPage from './views/LoginPage';
 import RegisterPage from './views/RegisterPage';
-import NotFound from './views/NotFoundPage';
+import NotFound from './views/NotFound';
 import HomePage from './views/HomePage';
 import Navbar from './components/Navbar';
 import Footer from './components/templates/Footer';
