@@ -30,7 +30,7 @@ export const HomePage = ({
 		}
 		const Role = checkRole('suppliers') || checkRole('travel_administrator');
 		setRole(Role);
-	});
+	}, []);
 	if (!loading && status === 'success') {
 		return (
 			<div className='container mt-7' data-testid='home-page'>

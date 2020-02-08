@@ -28,7 +28,7 @@ class EditProfile extends Component {
 	}
 
 	componentWillUnmount() {
-		this.setState()
+		this.setState();
 	}
 
 	/**
@@ -167,6 +167,13 @@ class EditProfile extends Component {
 								this.handleSave({ saveData, name: 'preferredLanguage', event })}
 							classNames='form-control form-control-sm'
 						/>
+						<div className='form-group'>
+							<input
+								type='button'
+								className='btn btn-info'
+								value='Manage Two Factor Authentication'
+							/>
+						</div>
 					</div>
 					<div className='row justify-content-center'>
 						<LoadingButton

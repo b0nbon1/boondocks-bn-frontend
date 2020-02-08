@@ -637,26 +637,11 @@ describe(' ', () => {
       "iat":1578472431,
       "exp":1578558831
     }`);
-  })
+  });
 
   afterEach(() => {
     cleanup();
     global.localStorage.clear();
     localStorage.store = {};
    });
-
-
-  //  test('User can create a one way trip', async () => {
-  //   getLocations.mockImplementation(() => Promise.resolve(locations));
-  //   getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
-  //   createATrip.mockImplementation(() => Promise.resolve(responseData));
-	//
-  //   const initialState = {
-  //     authState: {
-  //       isAuthenticated: true
-  //     }
-  //   };
-  //   const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-	//
-  // });
   });

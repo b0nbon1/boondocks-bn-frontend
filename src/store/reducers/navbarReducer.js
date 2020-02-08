@@ -3,6 +3,7 @@ import NAVBAR_TYPES from '../actions/navbar/navbarTypes';
 const initialState = {
 	navItems: [],
 	notifications: [],
+	twoFAVerified: false,
 };
 
 const navbarReducer = (state = initialState, { type, payload }) => {
@@ -12,6 +13,7 @@ const navbarReducer = (state = initialState, { type, payload }) => {
 				...state,
 				navItems: payload.navItems,
 				notifications: payload.notificationsItems,
+				twoFAVerified: payload.twoFAVerified,
 			};
 		default:
 			return state;

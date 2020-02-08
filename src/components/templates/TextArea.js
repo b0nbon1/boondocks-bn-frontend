@@ -15,7 +15,6 @@ export default function TextArea({
 			<label htmlFor={name}>{label}</label>
 			<textarea
 				name={name}
-				// id={name}
 				className='form-control'
 				placeholder={placeholder}
 				onChange={onChange}

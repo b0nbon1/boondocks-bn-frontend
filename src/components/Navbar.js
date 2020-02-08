@@ -11,7 +11,12 @@ class Navbar extends Component {
 	}
 
 	render() {
-		const { notifications, isAuthenticated, navItems } = this.props;
+		const {
+			notifications,
+			isAuthenticated,
+			navItems,
+			twoFAVerified,
+		} = this.props;
 		return (
 			<div
 				id='nav'
@@ -24,6 +29,7 @@ class Navbar extends Component {
 								notifications={isAuthenticated ? notifications : []}
 								isAuthenticated={isAuthenticated}
 								navItems={navItems}
+								twoFAVerified={twoFAVerified}
 							/>
 						</div>
 					</div>
@@ -35,6 +41,7 @@ class Navbar extends Component {
 
 const mapStateToProps = state => ({
 	navItems: state.navbarState.navItems,
+	twoFAVerified: state.navbarState.twoFAVerified,
 	notifications: state.navbarState.notifications,
 	isAuthenticated: state.authState.isAuthenticated,
 });
@@ -45,10 +52,14 @@ export default connect(mapStateToProps, {
 
 Navbar.propTypes = {
 	notifications: PropTypes.instanceOf(Array),
-	// notifications: PropTypes.instanceOf(Array).isRequired,
 	isAuthenticated: PropTypes.bool.isRequired,
 	navItems: PropTypes.instanceOf(Array).isRequired,
+	twoFAVerified: PropTypes.bool,
 	updateNavbar: PropTypes.func.isRequired,
+};
+
+Navbar.defaultProps = {
+	twoFAVerified: false,
 };
 
 Navbar.defaultProps = {

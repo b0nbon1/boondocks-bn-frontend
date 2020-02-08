@@ -1,15 +1,16 @@
 /* eslint-disable react/no-array-index-key */
 import { Link } from 'react-router-dom';
 import React from 'react';
-import { accountLinks } from '../utils/userAccountLinks';
+import PropTypes from 'prop-types';
 import Logout from './auth/Logout';
 
 /**
  * UserAccount
+ * @param items
  * @returns {*}
  * @constructor
  */
-const UserAccount = () => (
+const UserAccount = ({ items }) => (
 	<li
 		data-testid='user-account'
 		className='nav-item user-account mx-0 mx-md-3 active'
@@ -25,7 +26,7 @@ const UserAccount = () => (
 			<div className='user-avatar'>{localStorage.name_initials}</div>
 		</div>
 		<div className='dropdown-menu'>
-			{accountLinks.map((item, idx) => (
+			{items.map((item, idx) => (
 				<Link key={idx} className='dropdown-item' to={item.linkRoute}>
 					{item.linkText}
 				</Link>
@@ -34,5 +35,9 @@ const UserAccount = () => (
 		</div>
 	</li>
 );
+
+UserAccount.propTypes = {
+	items: PropTypes.array.isRequired,
+};
 
 export default UserAccount;

@@ -4,10 +4,25 @@ import { Link } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import NavLinkItem from './templates/NavLinkItem';
 import UserAccount from './UserAccount';
+import { accountLinks } from '../utils/userAccountLinks';
 
-export const NavbarNav = ({ navItems, isAuthenticated, notifications }) => {
+/**
+ * NavbarNav
+ * @param navItems
+ * @param isAuthenticated
+ * @param notifications
+ * @param twoFAData
+ * @returns {*}
+ * @constructor
+ */
+export const NavbarNav = ({
+	navItems,
+	twoFAVerified,
+	isAuthenticated,
+	notifications,
+}) => {
 	const hasUserData = !!localStorage.bn_user_data;
-	useEffect(() => {}, [isAuthenticated]);
+	useEffect(() => {}, [twoFAVerified, isAuthenticated]);
 	return (
 		<nav
 			data-testid='navbar-nav'
@@ -37,19 +52,30 @@ export const NavbarNav = ({ navItems, isAuthenticated, notifications }) => {
 					))}
 				</ul>
 				{(isAuthenticated || hasUserData) && (
-					<ul
-						data-testid='other-links'
-						className='navbar-nav ml-auto py-4 py-md-0'
-					>
-						{/* <NavLinkItem linkText='Public chat' icon='comments' /> */}
-						<NavLinkItem
-							linkText='&nbsp;'
-							icon='bell-o bell-icon small-icon'
-							haspopup
-							notifications={notifications}
-						/>
-						<UserAccount />
-					</ul>
+					<>
+						{twoFAVerified ? (
+							<ul
+								data-testid='other-links'
+								className='navbar-nav ml-auto py-4 py-md-0'
+							>
+								{/* <NavLinkItem linkText='Public chat' icon='comments' /> */}
+								<NavLinkItem
+									linkText='&nbsp;'
+									icon='bell-o bell-icon small-icon'
+									haspopup
+									notifications={notifications}
+								/>
+								<UserAccount items={accountLinks} />
+							</ul>
+						) : (
+							<ul
+								data-testid='other-links'
+								className='navbar-nav ml-auto py-4 py-md-0'
+							>
+								<UserAccount items={[]} />
+							</ul>
+						)}
+					</>
 				)}
 			</div>
 		</nav>

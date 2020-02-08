@@ -93,8 +93,6 @@ describe('Create accomodations Actions Test Suite', () => {
     });
   });
 
-  // it('it Should dispatch login successfully', async () => {
-
   it('it Should dispatch error when provided wrong details', async () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
@@ -162,5 +160,4 @@ describe('Create accomodations Actions Test Suite', () => {
       expect(calledActions).toEqual(expectedActions);
     });
   });
-
 });

@@ -9,8 +9,10 @@ import {
 const updateNavbar = () => dispatch => {
 	let navItems = [];
 	const user = JSON.parse(localStorage.getItem('bn_user_data')) || {};
+	const bnUser2FA = JSON.parse(localStorage.getItem('bn_user_2fa'));
+	const twoFAVerified = bnUser2FA ? bnUser2FA.twoFAVerified : false;
 
-	if (ROLE_TYPES.includes(user.role)) {
+	if (ROLE_TYPES.includes(user.role) && twoFAVerified) {
 		navItems = [...navItemObjects.general, ...navItemObjects[user.role]];
 	} else {
 		navItems = [...navItemObjects.un_authenticated];
@@ -20,6 +22,7 @@ const updateNavbar = () => dispatch => {
 		actionFunc(NAVBAR_TYPES.UPDATE_NAVBAR, {
 			navItems,
 			notificationsItems,
+			twoFAVerified,
 		}),
 	);
 };
