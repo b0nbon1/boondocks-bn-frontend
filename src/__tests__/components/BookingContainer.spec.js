@@ -120,21 +120,38 @@ const bookResponse = {
 		leavingDate: '2020-01-27T00:00:00.000Z',
 		bookedRooms: [
 			{
-				bookingId: 31,
-				room: {
-					id: 1,
-					hotelId: 2,
-					name: 'Virunga',
-					type: 'VIP',
-					description: 'hello',
-					image: '',
-					cost: 1000,
-					status: 'reserved',
-					createdAt: '2020-12-11T22:00:00.000Z',
-					updatedAt: '2020-01-26T10:31:50.139Z',
-				},
-			},
-		],
+					"bookingId": 91,
+					"bookingDetails": {
+							"paymentType": "unpaid",
+							"id": 91,
+							"hotelId": 10,
+							"userId": 2,
+							"arrivalDate": "2020-03-08T00:00:00.000Z",
+							"leavingDate": "2020-03-10T00:00:00.000Z",
+							"roomId": 31,
+							"tripId": null,
+							"amount": "40.00",
+							"updatedAt": "2020-02-19T15:28:13.233Z",
+							"createdAt": "2020-02-19T15:28:13.233Z",
+							"isPaid": false
+					},
+					"hotelDetails": {
+							"name": "Hotel"
+					},
+					"room": {
+							"id": 31,
+							"hotelId": 10,
+							"name": "RM2",
+							"type": "double bed",
+							"description": "Any room is nice",
+							"image": "https://boondocks-bn-images.s3.us-east-2.amazonaws.com/rooms/1582002198814-barefoot.png",
+							"cost": 20,
+							"status": "reserved",
+							"createdAt": "2020-02-18T05:03:31.726Z",
+							"updatedAt": "2020-02-19T15:28:13.256Z"
+					}
+			}
+	],
 	},
 };
 
@@ -227,7 +244,7 @@ describe('Booking page', () => {
 
 	test("User can book an accommodation", async () => {
 		getHotelById.mockImplementation(() => Promise.resolve(hotel));
-    bookAccommodation.mockImplementation(() => Promise.resolve(bookResponse));
+    bookAccommodation.mockImplementation(() => Promise.resolve({ data: bookResponse }));
 
 		const history = createMemoryHistory();
 		const { getByTestId, getByPlaceholderText, getAllByTestId, getByText, queryByText } = render(

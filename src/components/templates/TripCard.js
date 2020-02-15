@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { formatIsoDate } from '../../lib/time';
 import EditRequest from '../request/EditRequest';
+import { book } from '../../store/actions/bookingActions';
 
 const TripField = ({ keyTrip, value }) => {
 	return (
@@ -21,6 +22,7 @@ const TripCard = ({ trip, status, role }) => {
 		going,
 		leaving,
 		returnDate,
+		booking,
 		id,
 	} = trip;
 	const tripData = {
@@ -31,6 +33,8 @@ const TripCard = ({ trip, status, role }) => {
 		'Going To': `${going.city}, ${going.country}`,
 		'Leaving From': `${leaving.city}, ${leaving.country}`,
 		'Return Date': formatIsoDate(returnDate),
+		amount: booking.amount,
+		'payment type': booking.paymentType,
 	};
 
 	return (

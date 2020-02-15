@@ -1,28 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import propTypes from 'prop-types';
 import Select from 'react-select';
 import moment from 'moment';
-import LoadingButton from '../templates/Button';
-import TextArea from '../templates/TextArea';
-import {
-	fetchCreateTripData,
-	createTrip,
-} from '../../store/actions/requests/createTripActions';
-import {
-	renderPageLoadingSpinner,
-	closePageLoadingSpinner,
-} from '../../store/actions/loadingActions';
-import toast from '../../lib/toast';
-import TravelProfile from '../profile/TravelProfile';
-import {
-	fetchUserProfile,
-	saveProfile,
-	updateProfile,
-} from '../../store/actions/profile/profileActions';
+import LoadingButton from '../../templates/Button';
+import TextArea from '../../templates/TextArea';
 
 export class CreateRequest extends Component {
 	constructor(props) {
@@ -37,8 +20,8 @@ export class CreateRequest extends Component {
 					returnDate: '',
 					leavingFrom: null,
 					goingTo: null,
-					hotel: null,
 					hotels: null,
+					hotel: null,
 					rooms: null,
 					reason: '',
 					myRef1: React.createRef(),
@@ -51,11 +34,7 @@ export class CreateRequest extends Component {
 
 	async componentDidMount() {
 		const { props } = this;
-		props.renderPageLoadingSpinner();
-		await props.fetchCreateTripData();
-		const user = JSON.parse(localStorage.getItem('bn_user_data'));
-		props.fetchUserProfile(user.userId, true);
-		props.closePageLoadingSpinner();
+		this.setState({ ...props.data.tripRequest });
 	}
 
 	createUI(allLocationOptions) {
@@ -85,6 +64,7 @@ export class CreateRequest extends Component {
 							type='date'
 							name='returnDate'
 							defaultValue={el.returnDate}
+							required={tripType === 'return'}
 							className='form-control createTripInputs'
 							onChange={event => this.handleChangeReturnDate(event, el)}
 							disabled={tripType === 'one way' || tripType === 'multi-city'}
@@ -201,8 +181,6 @@ export class CreateRequest extends Component {
 						name='reason'
 						defaultValue={el.reason}
 						onChange={event => this.handleChange(event, el)}
-						minLength='10'
-						maxLength='200'
 						required
 						value={el.reason || ''}
 						testId='reason'
@@ -346,6 +324,7 @@ export class CreateRequest extends Component {
 		}
 		const { state } = this;
 		const currentValuesInState = [...state.allTrips];
+
 		const currentRef = `myRef${element.id}`;
 		const node = element[currentRef].current;
 
@@ -453,25 +432,13 @@ export class CreateRequest extends Component {
 		}
 	}
 
-	handleFormSubmit(formSubmitEvent) {
+	async handleFormSubmit(formSubmitEvent) {
 		formSubmitEvent.preventDefault();
 		const { state } = this;
 		const { props } = this;
 		const { tripType } = state;
 		const formsArray = state.allTrips;
-
-		const { profile, editErrors } = props;
-
-		let error;
-		Object.keys(editErrors).forEach(key => {
-			if (editErrors[key] !== null) {
-				error = 1;
-			}
-		});
-		if (error === 1) {
-			toast('error', 'Errors found, please review information');
-			return;
-		}
+		const { profile, nextStep } = this.props;
 
 		if (formsArray.length === 1 && tripType !== 'multi-city') {
 			const thisFormState = formsArray[0];
@@ -508,11 +475,11 @@ export class CreateRequest extends Component {
 					returnDate,
 				};
 				endpoint = '/trips/return';
-				props.createTrip(userRequest, endpoint, profile);
+				await props.createTrip(userRequest, endpoint, profile);
 				this.setState({ checkSubmit: true });
 			} else {
 				endpoint = '/trips/oneway';
-				props.createTrip(userRequest, endpoint, profile);
+				await props.createTrip(userRequest, endpoint, profile);
 				this.setState({ checkSubmit: true });
 			}
 		} else {
@@ -527,7 +494,6 @@ export class CreateRequest extends Component {
 					rooms,
 					reason,
 				} = element;
-
 				userRequest = {
 					type: 'one way',
 					leavingFrom: leavingFrom !== null ? Number(leavingFrom) : null,
@@ -546,25 +512,25 @@ export class CreateRequest extends Component {
 				formRequestArray.push(userRequest);
 			});
 
-			props.createTrip(formRequestArray, '/trips/multi-city', profile);
+			await props.createTrip(formRequestArray, '/trips/multi-city', profile);
 			this.setState({ checkSubmit: true });
 		}
+
+		nextStep();
+	}
+
+	handleBack(event) {
+		event.preventDefault();
+		const { handleData, prevStep } = this.props;
+
+		handleData('tripRequest', this.state);
+		prevStep();
 	}
 
 	render() {
-		const userData = JSON.parse(localStorage.bn_user_data);
-		if (userData.lineManagerId === null) {
-			toast('error', 'You need to have a line manager to create trip requests');
-			return <Redirect to='/profile' />;
-		}
 		const { createTripData } = this.props;
-		const { tripCreated } = createTripData;
 		const { state } = this;
 		const { tripType } = state;
-		const { checkSubmit } = state;
-		if (tripCreated === true && checkSubmit === true) {
-			return <Redirect to='/requests' />;
-		}
 
 		let allLocationOptions, allLocationsWithHotels;
 
@@ -579,136 +545,114 @@ export class CreateRequest extends Component {
 
 		const { loadingData } = this.props;
 		const { buttonLoading } = loadingData;
-		const { props } = this;
 		return (
-			<div className='createTripContainer card mx-auto mb-2'>
-				<form
-					className='createTripForm card-body'
-					onSubmit={event => this.handleFormSubmit(event)}
-				>
-					<div className='center-trip-radio-buttons'>
-						<div className='form-check'>
-							<label>
-								<input
-									type='radio'
-									name='tripType'
-									className='form-check-input'
-									value='one way'
-									checked={state.tripType === 'one way'}
-									onChange={event => this.handleChangeType(event)}
-									data-testid='oneway'
-								/>
-								One way trip
-							</label>
-						</div>
-						<div className='form-check'>
-							<label>
-								<input
-									type='radio'
-									name='tripType'
-									className='form-check-input'
-									value='return'
-									checked={state.tripType === 'return'}
-									onChange={event => this.handleChangeType(event)}
-									data-testid='return'
-								/>
-								Return trip
-							</label>
-						</div>
-						<div className='form-check'>
-							<label>
-								<input
-									type='radio'
-									name='tripType'
-									className='form-check-input'
-									value='multi-city'
-									checked={state.tripType === 'multi-city'}
-									onChange={event => this.handleChangeType(event)}
-									data-testid='multi-city'
-								/>
-								Multi-city trip
-							</label>
-						</div>
-					</div>
-
-					{this.createUI(allLocationOptions, allLocationsWithHotels)}
-					<button
-						type='button'
-						className='btn btn-default btn-sm'
-						onClick={() => this.addClick()}
-						data-testid='addbutton'
-						hidden={tripType === 'one way' || tripType === 'return'}
+			<div>
+				<div className='card-header w-100 bg-white'>
+					<h6 className='m-0 font-weight-bold text-primary'>
+						Trip request Details
+					</h6>
+				</div>
+				<div className='createTripContainer'>
+					<form
+						data-testid='submitInput'
+						className='createTripForm card-body'
+						onSubmit={event => this.handleFormSubmit(event)}
 					>
-						<span className='oi oi-plus' />
-						Add trip
-					</button>
+						<div className='center-trip-radio-buttons'>
+							<div className='form-check'>
+								<label>
+									<input
+										type='radio'
+										name='tripType'
+										className='form-check-input'
+										value='one way'
+										checked={state.tripType === 'one way'}
+										onChange={event => this.handleChangeType(event)}
+										data-testid='oneway'
+									/>
+									One way trip
+								</label>
+							</div>
+							<div className='form-check'>
+								<label>
+									<input
+										type='radio'
+										name='tripType'
+										className='form-check-input'
+										value='return'
+										checked={state.tripType === 'return'}
+										onChange={event => this.handleChangeType(event)}
+										data-testid='return'
+									/>
+									Return trip
+								</label>
+							</div>
+							<div className='form-check'>
+								<label>
+									<input
+										type='radio'
+										name='tripType'
+										className='form-check-input'
+										value='multi-city'
+										checked={state.tripType === 'multi-city'}
+										onChange={event => this.handleChangeType(event)}
+										data-testid='multi-city'
+									/>
+									Multi-city trip
+								</label>
+							</div>
+						</div>
 
-					<TravelProfile
-						profile={props.profile}
-						managers={props.managers}
-						saveData={props.updateProfile}
-						errors={props.editErrors}
-						isEditing={props.isEditing}
-					/>
+						{this.createUI(allLocationOptions, allLocationsWithHotels)}
+						<button
+							type='button'
+							className='btn btn-default btn-sm'
+							onClick={() => this.addClick()}
+							data-testid='addbutton'
+							hidden={tripType === 'one way' || tripType === 'return'}
+						>
+							<span className='oi oi-plus' />
+							Add trip
+						</button>
 
-					<div className='form-group createTripBtn'>
-						<LoadingButton
-							data-test='submitInput'
-							testId='submitInput'
-							classNames='btn btn-success btn-trips'
-							value='SUBMIT REQUEST'
-							buttonLoading={buttonLoading}
-						/>
-					</div>
-				</form>
+						<div className='w-100 mt-5'>
+							<button
+								data-testid='back-btn'
+								type='button'
+								className='btn btn-primary float-left'
+								onClick={event => this.handleBack(event)}
+							>
+								Back
+							</button>
+							<LoadingButton
+								data-test='submitbtn'
+								classNames='btn btn-primary float-right'
+								buttonLoading={buttonLoading}
+								value='Save & Proceed'
+							/>
+						</div>
+					</form>
+				</div>
 			</div>
 		);
 	}
 }
 
 CreateRequest.propTypes = {
-	fetchCreateTripData: propTypes.func,
 	createTripData: propTypes.object,
 	createTrip: propTypes.func,
+	handleData: propTypes.func.isRequired,
+	prevStep: propTypes.func.isRequired,
 	loadingData: propTypes.objectOf(propTypes.any),
-	renderPageLoadingSpinner: propTypes.func,
-	closePageLoadingSpinner: propTypes.func,
-	fetchUserProfile: propTypes.func.isRequired,
 	profile: propTypes.instanceOf(Object).isRequired,
-	updateProfile: propTypes.func.isRequired,
-	editErrors: propTypes.instanceOf(Object).isRequired,
-	managers: propTypes.instanceOf(Array).isRequired,
-	isEditing: propTypes.bool.isRequired,
+	data: propTypes.instanceOf(Object).isRequired,
+	nextStep: propTypes.func.isRequired,
 };
 
 CreateRequest.defaultProps = {
-	fetchCreateTripData: null,
 	createTripData: null,
 	createTrip: null,
 	loadingData: null,
-	renderPageLoadingSpinner: null,
-	closePageLoadingSpinner: null,
 };
 
-export const mapStateToProps = state => ({
-	loadingData: state.loadingState,
-	createTripData: state.createTripState,
-	profile: state.profileState.userProfile,
-	currentUserId: state.profileState.currentUserId,
-	loggedIn: state.loginState.loggedIn,
-	managers: state.profileState.managers,
-	editErrors: state.profileState.errors,
-	isEditing: state.profileState.isEditing,
-});
-
-const mapDispatchToProps = {
-	fetchCreateTripData,
-	createTrip,
-	renderPageLoadingSpinner,
-	closePageLoadingSpinner,
-	fetchUserProfile,
-	updateProfile,
-	saveUserInfo: saveProfile,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CreateRequest);
+export default CreateRequest;

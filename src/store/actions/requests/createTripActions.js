@@ -19,6 +19,7 @@ import {
 } from '../../../lib/services/user.service';
 import ACTION_TYPES from '../profile/profileTypes';
 import { getRatingData } from '../accomodations/rateAccomodationActions';
+import formatBookingData from '../../../utils/formatBookingData';
 
 const fetchCreateTripData = () => async dispatch => {
 	try {
@@ -75,7 +76,7 @@ const createTrip = (userRequest, endpoint, profile) => async dispatch => {
 
 	try {
 		const res = await createATrip(userRequest, endpoint);
-		dispatch(actionFunc(CREATE_TRIP_SUCCESS, res.data.message));
+		dispatch(actionFunc(CREATE_TRIP_SUCCESS, formatBookingData(res.data.data)));
 		// trigger re-render: to revisit
 		dispatch(getRatingData(userId));
 		toast('success', 'Trip request created successfully');

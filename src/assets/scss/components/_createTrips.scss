@@ -6,7 +6,6 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  max-width: 56.25rem;
 }
 .center-trip-radio-buttons{
   display: flex;
@@ -122,4 +121,26 @@ div.form-check:nth-child(2){
   .tripReason > label:nth-child(1){
     margin-top: 0.625rem;
   }
+}
+
+.indexedStep {
+  color: white;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  font-weight: 700;
+  background-color: rgba(211, 211, 211, 0.8);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.indexedStep.accomplished {
+  background-color: rgba(0, 116, 217, 1);
+}
+
+.cart-image {
+  height: 100px !important;
+  width: 120px !important;
 }
