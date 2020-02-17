@@ -54,7 +54,7 @@ export const ProtectedRoute = ({
 };
 
 ProtectedRoute.propTypes = {
-	component: PropTypes.object,
+	component: PropTypes.any,
 	location: PropTypes.shape({ pathname: PropTypes.string.isRequired }),
 	setAuthState: PropTypes.func.isRequired,
 };
