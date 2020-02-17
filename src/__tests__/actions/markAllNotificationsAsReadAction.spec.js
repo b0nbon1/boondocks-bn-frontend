@@ -2,7 +2,8 @@ import moxios from "moxios";
 import apiCall from "../../utils/api";
 import {
   MARKED_AS_READ_FAILURE,
-  MARKED_AS_READ_SUCCESS
+  MARKED_AS_READ_SUCCESS,
+  LOADING
 } from "../../store/actions/types";
 import thunk from "redux-thunk";
 import configureMockStore from "redux-mock-store";
@@ -35,10 +36,12 @@ describe("\"markAllNotificationsAsReadAction\" - WITHOUT ANY TOKEN", () => {
     });
 
     const expectedActions = [
+      actionFunc(LOADING, true),
       actionFunc(MARKED_AS_READ_FAILURE, {
         message: "unable to fetch",
         status: "error"
       }),
+      actionFunc(LOADING, false),
     ];
 
     store = mockStore({});
@@ -80,7 +83,9 @@ describe("\"markAllNotificationsAsReadAction\" - WITH TOKEN", () => {
     });
 
     const expectedActions = [
+      actionFunc(LOADING, true),
       actionFunc(MARKED_AS_READ_SUCCESS, true),
+      actionFunc(LOADING, false),
     ];
 
     store = mockStore({});

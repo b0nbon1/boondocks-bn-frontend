@@ -20,6 +20,7 @@ const singleRequest = id => async dispatch => {
 
 export const changeRequestStatus = (requestId, status) => async dispatch => {
 	dispatch(actionFunc(BUTTON_LOADING, true));
+	dispatch(actionFunc(LOADING, true));
 	const request = await updateRequestStatus(requestId, status);
 	dispatch(actionFunc(REQUEST_STATUS_CHANGE_SUCCESS, request.data.status));
 	toast('success', request.message);
@@ -27,6 +28,7 @@ export const changeRequestStatus = (requestId, status) => async dispatch => {
 	const updatedRequest = await getSingleRequest(requestId);
 	dispatch(actionFunc(FETCH_REQUEST_SUCCESS, updatedRequest.data));
 	dispatch(actionFunc(BUTTON_LOADING, false));
+	dispatch(actionFunc(LOADING, false));
 };
 
 export default singleRequest;

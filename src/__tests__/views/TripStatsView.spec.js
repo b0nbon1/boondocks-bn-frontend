@@ -143,14 +143,14 @@ describe('Trips stats page manager', ()=> {
     mockAxios.reset();
   });
   it("User can view trips stat page ", async () => {
-		const { getByText, getByTestId, getByPlaceholderText } = render(
+		const { getByTestId } = render(
 			<BrowserRouter>
 				<TravelStatsView />
 			</BrowserRouter>
     );
 
 		const hotelsTitle = await waitForElement(
-			() => getByText("Please wait...")
+			() => getByTestId("loading")
     );
     
     expect(hotelsTitle).toBeInTheDocument();

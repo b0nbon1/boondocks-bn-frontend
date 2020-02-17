@@ -33,8 +33,8 @@ const TripCard = ({ trip, status, role }) => {
 		'Going To': `${going.city}, ${going.country}`,
 		'Leaving From': `${leaving.city}, ${leaving.country}`,
 		'Return Date': formatIsoDate(returnDate),
-		amount: booking.amount,
-		'payment type': booking.paymentType,
+		amount: booking.amount || '',
+		'payment type': booking.paymentType || '',
 	};
 
 	return (

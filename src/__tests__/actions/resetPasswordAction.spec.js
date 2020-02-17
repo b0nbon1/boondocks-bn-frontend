@@ -1,9 +1,10 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import moxios from 'moxios';
-import { ERROR, RESET_PASSWORD, FORGOT_PASSWORD } from '../../store/actions/types';
+import { ERROR, RESET_PASSWORD, FORGOT_PASSWORD, LOADING } from '../../store/actions/types';
 import { forgotPassword, resetPassword } from '../../store/actions/resetPasswordAction';
 import apiCall from '../../utils/api';
+import actionFunc from '../../utils/actionFunc';
 
 let store;
 const middlewares = [thunk];
@@ -35,6 +36,7 @@ describe('Reset password Actions Test Suite', () => {
       payload: true,
       type: "BUTTON_LOADING",
     },
+    actionFunc(LOADING, true),
     {
       payload: {
         status: 'error',
@@ -45,7 +47,8 @@ describe('Reset password Actions Test Suite', () => {
     {
       payload: false,
       type: "BUTTON_LOADING",
-    }];
+    },
+  ];
     store = mockStore({});
     await store.dispatch(forgotPassword({}))
       .then(async () => {
@@ -71,6 +74,7 @@ describe('Reset password Actions Test Suite', () => {
         payload: true,
         type: "BUTTON_LOADING",
       },
+      actionFunc(LOADING, true),
       {
       payload: {
         status: 'success',
@@ -81,7 +85,7 @@ describe('Reset password Actions Test Suite', () => {
     {
       payload: false,
       type: "BUTTON_LOADING",
-    }
+    },
   ];
     store = mockStore({});
     const email = 'bonvic@gmail.com';

@@ -4,6 +4,7 @@ import {
 	RESET_PASSWORD,
 	FORGOT_PASSWORD,
 	BUTTON_LOADING,
+	LOADING,
 } from './types';
 import actionFunc from '../../utils/actionFunc';
 import apiCall from '../../utils/api';
@@ -12,6 +13,7 @@ const host = window.location.origin;
 
 export const forgotPassword = ({ email }) => async dispatch => {
 	dispatch(actionFunc(BUTTON_LOADING, true));
+	dispatch(actionFunc(LOADING, true));
 	try {
 		const res = await apiCall.post(`/auth/forgotPassword?host=${host}`, {
 			email,

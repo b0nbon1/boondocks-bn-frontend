@@ -5,6 +5,7 @@ import {
 	BUTTON_LOADING,
 	FETCH_CREATE_TRIP_DATA_SUCCESS,
 	FETCH_CREATE_TRIP_DATA_FAILURE,
+	LOADING,
 } from '../types';
 import actionFunc from '../../../utils/actionFunc';
 import {
@@ -23,6 +24,7 @@ import formatBookingData from '../../../utils/formatBookingData';
 
 const fetchCreateTripData = () => async dispatch => {
 	try {
+		dispatch(actionFunc(LOADING, true));
 		const allLocations = await getLocations();
 		const locationsWithHotels = await getLocationsWithHotels();
 
@@ -32,10 +34,12 @@ const fetchCreateTripData = () => async dispatch => {
 				locationsWithHotels: locationsWithHotels.data.data,
 			}),
 		);
+		dispatch(actionFunc(LOADING, false));
 	} catch (error) {
 		dispatch(
 			actionFunc(FETCH_CREATE_TRIP_DATA_FAILURE, error.response.data.message),
 		);
+		dispatch(actionFunc(LOADING, false));
 	}
 };
 
