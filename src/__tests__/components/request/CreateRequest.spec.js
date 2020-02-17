@@ -456,6 +456,44 @@ describe(' ', () => {
 
   });
 
+  test('User can create one way trip without updating profile', async () => {
+    getLocations.mockImplementation(() => Promise.resolve(locations));
+    getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
+    createATrip.mockImplementation(() => Promise.resolve(responseData));
+    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
+    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
+
+    const initialState = {
+      authState: {
+        isAuthenticated: true
+      }
+    };
+    const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+
+    const [
+      oneWayTypeField,
+      travelDateField,
+      leavingFromField,
+      goingToField,
+      reasonField,
+      submitButton
+    ] = await waitForElement(() => [
+      getByTestId('oneway'),
+      getByTestId('travelDate'),
+      getByTestId('leavingFrom'),
+      getByTestId('goingTo'),
+      getByTestId('reason'),
+      getByTestId('submitInput'),
+    ]);
+
+    fireEvent.click(oneWayTypeField);
+    fireEvent.change(travelDateField, {target:{value: '2020-03-01'}});
+    fireEvent.change(leavingFromField, {target:{value: 1}});
+    fireEvent.change(goingToField, {target:{value: 7}});
+    fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
+		fireEvent.click(submitButton);
+  });
+
   test('User can create a return trip', async () => {
     getLocations.mockImplementation(() => Promise.resolve(locations));
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
@@ -507,6 +545,58 @@ describe(' ', () => {
 
   });
 
+
+  test('User can clear date validation error after correcting return trip dates', async () => {
+    getLocations.mockImplementation(() => Promise.resolve(locations));
+    getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
+    createATrip.mockImplementation(() => Promise.resolve(responseData));
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
+    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
+
+
+		const initialState = {
+      authState: {
+        isAuthenticated: true
+      }
+    };
+    const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+
+    const [
+      returnTypeField,
+      travelDateField,
+      returnDateField,
+      leavingFromField,
+      goingToField,
+      selectHotelField,
+      selectRoomField,
+      reasonField,
+      submitButton
+    ] = await waitForElement(() => [
+      getByTestId('return'),
+      getByTestId('travelDate'),
+      getByTestId('returnDate'),
+      getByTestId('leavingFrom'),
+      getByTestId('goingTo'),
+      getByTestId('hotel'),
+      getByTestId('room'),
+      getByTestId('reason'),
+      getByTestId('submitInput'),
+    ]);
+
+    fireEvent.click(returnTypeField);
+    fireEvent.change(returnDateField, {target:{value: '2020-03-31'}});
+    fireEvent.change(travelDateField, {target:{value: '2021-01-31'}});
+    fireEvent.change(leavingFromField, {target:{value: 1}});
+    fireEvent.change(goingToField, {target:{value: 7}});
+    fireEvent.change(selectHotelField, {target:{value: 1}});
+    fireEvent.change(selectRoomField, {target:{value: 9}});
+    fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
+    fireEvent.click(submitButton);
+    fireEvent.change(returnDateField, {target:{value: '2021-03-31'}});
+    fireEvent.click(submitButton);
+  });
 
   test('User can create a multi-city trip', async () => {
     getLocations.mockImplementation(() => Promise.resolve(locations));
@@ -623,40 +713,93 @@ describe(' ', () => {
     fireEvent.click(removeButton[1])
 
   });
-})
 
-describe(' ', () => {
-  beforeAll(() => {
-    global.localStorage.setItem("bn_user_data", `{
-      "email":"requestero@user.com",
-      "name":"Requester",
-      "userId":2,
-      "verified":true,
-      "role":"requester",
-      "lineManagerId": null,
-      "iat":1578472431,
-      "exp":1578558831
-    }`);
-  })
-
-  afterEach(() => {
-    cleanup();
-    global.localStorage.clear();
-    localStorage.store = {};
-   });
+  test('Prevent goingTo from being set to null on form delete', async () => {
+    getLocations.mockImplementation(() => Promise.resolve(locations));
+    getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
+    createATrip.mockImplementation(() => Promise.resolve(responseData));
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
+    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
 
 
-  //  test('User can create a one way trip', async () => {
-  //   getLocations.mockImplementation(() => Promise.resolve(locations));
-  //   getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
-  //   createATrip.mockImplementation(() => Promise.resolve(responseData));
-	//
-  //   const initialState = {
-  //     authState: {
-  //       isAuthenticated: true
-  //     }
-  //   };
-  //   const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-	//
-  // });
+    const initialState = {
+      authState: {
+        isAuthenticated: true
+      }
+    };
+    const { getByTestId ,getAllByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+
+    const [
+      multiCityTypeField,
+      travelDateField,
+      leavingFromField,
+      goingToField,
+      selectHotelField,
+      selectRoomField,
+      reasonField,
+      submitButton,
+      addTripButton,
+    ] = await waitForElement(() => [
+      getAllByTestId('multi-city'),
+      getAllByTestId('travelDate'),
+      getAllByTestId('leavingFrom'),
+      getAllByTestId('goingTo'),
+      getAllByTestId('hotel'),
+      getAllByTestId('room'),
+      getAllByTestId('reason'),
+      getByTestId('submitInput'),
+      getByTestId('addbutton'),
+    ]);
+
+    fireEvent.click(multiCityTypeField[0]);
+
+
+    fireEvent.click(addTripButton);
+    fireEvent.click(addTripButton);
+
+    const [
+      travelDateField1,
+      leavingFromField1,
+      goingToField1,
+      selectHotelField1,
+      selectRoomField1,
+      reasonField1,
+      addTripButton1,
+      multiCityTypeField1,
+    ] = await waitForElement(() => [
+      getAllByTestId('travelDate'),
+      getAllByTestId('leavingFrom'),
+      getAllByTestId('goingTo'),
+      getAllByTestId('hotel'),
+      getAllByTestId('room'),
+      getAllByTestId('reason'),
+      getByTestId('addbutton'),
+      getAllByTestId('multi-city'),
+    ]);
+
+    fireEvent.change(travelDateField[0], {target:{value: '2021-01-31'}});
+    fireEvent.change(leavingFromField[0], {target:{value: 1}});
+    fireEvent.change(goingToField[0], {target:{value: 7}});
+    fireEvent.change(selectHotelField[0], {target:{value: 1}});
+    fireEvent.change(selectRoomField[0], {target:{value: 9}});
+    fireEvent.change(reasonField[0], {target:{value: 'Reason for the trip goes here'}});
+
+    fireEvent.change(travelDateField1[1], {target:{value: '2021-01-31'}});
+    fireEvent.change(leavingFromField1[1], {target:{value: 1}});
+    fireEvent.change(goingToField1[1], {target:{value: 7}});
+    fireEvent.change(reasonField1[1], {target:{value: 'Reason for the trip goes here'}});
+
+
+    const [
+      removeBtns,
+    ] = await waitForElement(() => [
+      getAllByTestId('delete'),
+    ]);
+
+    fireEvent.click(removeBtns[1]);
+
   });
+
+})
