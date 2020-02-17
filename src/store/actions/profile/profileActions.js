@@ -14,7 +14,7 @@ import {
 	isValidName,
 } from '../../../utils/validations';
 import actionFunc from '../../../utils/actionFunc';
-import { BUTTON_LOADING } from '../types';
+import { BUTTON_LOADING, LOADING } from '../types';
 import Toast from '../../../lib/toast';
 
 /**
@@ -26,6 +26,7 @@ const fetchUserProfile = (
 	userId,
 	creatingRequest = false,
 ) => async dispatch => {
+	dispatch(actionFunc(LOADING, true));
 	const profileData = await getUserProfile(userId);
 	let profile = profileData.data.data;
 
@@ -49,6 +50,8 @@ const fetchUserProfile = (
 			userId,
 		}),
 	);
+
+	dispatch(actionFunc(LOADING, false));
 };
 
 /**
@@ -199,9 +202,11 @@ export const transformProfile = (userProfile, dispatch) => {
 const saveProfile = userProfile => async dispatch => {
 	const profile = transformProfile(userProfile, dispatch);
 	dispatch(actionFunc(BUTTON_LOADING, true));
+	dispatch(actionFunc(LOADING, true));
 
 	if (!profile) {
 		dispatch(actionFunc(BUTTON_LOADING, false));
+		dispatch(actionFunc(LOADING, false));
 		return false;
 	}
 
@@ -222,6 +227,7 @@ const saveProfile = userProfile => async dispatch => {
 
 	dispatch(actionFunc(ACTION_TYPES.SET_EDIT_MODE, false));
 	dispatch(actionFunc(BUTTON_LOADING, false));
+	dispatch(actionFunc(LOADING, true));
 };
 
 export {

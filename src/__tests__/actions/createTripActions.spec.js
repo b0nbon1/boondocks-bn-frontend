@@ -1,10 +1,11 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import moxios from 'moxios';
-import { FETCH_CREATE_TRIP_DATA_FAILURE } from '../../store/actions/types';
+import { FETCH_CREATE_TRIP_DATA_FAILURE, LOADING } from '../../store/actions/types';
 import { fetchCreateTripData } from '../../store/actions/requests/createTripActions';
 import apiCall from '../../utils/api';
 import localStorage from "../../__mocks__/LocalStorage";
+import actionFunc from '../../utils/actionFunc';
 
 let store;
 const middlewares = [thunk];
@@ -45,10 +46,12 @@ describe('Create Trip Test Suite', () => {
     });
 
     const expectedActions = [
+      actionFunc(LOADING, true),
       {
         payload: "failed to fetch create trip data",
         type: FETCH_CREATE_TRIP_DATA_FAILURE,
-      }
+      },
+      actionFunc(LOADING, false)
     ];
 
     store = mockStore({});

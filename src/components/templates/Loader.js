@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 export const Loader = ({ loading }) => {
-	const hide = loading ? '' : 'hide-loader';
+	const progressBarRef = useRef({});
+
+	if (progressBarRef.current.style) {
+		if (loading) {
+			progressBarRef.current.classList.add('show-loader');
+		} else {
+			progressBarRef.current.classList.remove('show-loader');
+		}
+	}
+
 	return (
-		<div data-test='loading' className={`loader-wrapper ${hide}`}>
-			<div className='loader-loading__container'>
-				<div className='loader-first__layer' />
-				<div className='loader-second__layer' />
-				<div className='loader-third__layer' />
-				<div className='loader-fourth__layer' />
-				<div className='loader-last__layer' />
-				<div className='loader-last__layer2' />
-			</div>
+		<div className='loading-bar' ref={progressBarRef}>
+			<div className='indeterminate' />
 		</div>
 	);
 };

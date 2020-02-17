@@ -5,6 +5,7 @@ import { fetchTravelStats } from '../../store/actions/tripStatsActions';
 import StatsCard from './StatsCard';
 import SwiperHotel from './SwiperHotel';
 import StatsFilter from './StatsFilter';
+import LoadingPlaceholder from '../templates/LoadingPlaceholder';
 
 // eslint-disable-next-line react/prefer-stateless-function
 const TravelStats = props => {
@@ -12,6 +13,7 @@ const TravelStats = props => {
 		props.fetchTravelStats();
 	}, []);
 	const { loading, status } = props;
+
 	if (!loading && status === 'success') {
 		const {
 			weekTravels,
@@ -21,30 +23,50 @@ const TravelStats = props => {
 			mostVisitedHotels,
 		} = props;
 		return (
-			<div className='d-flex flex-column'>
-				<h1 className='text-center text-secondary mb-3'>Travel Statistics</h1>
-				<div className='row mb-5'>
-					<StatsCard color='primary' period='past week' travels={weekTravels} />
-					<StatsCard
-						color='success'
-						period='past month'
-						travels={monthTravels}
-					/>
-					<StatsCard color='info' period='past year' travels={yearTravels} />
-					<StatsCard
-						color='warning'
-						period='all travels'
-						travels={allTravels}
-					/>
-				</div>
-				<div className='row'>
-					<SwiperHotel hotels={mostVisitedHotels} />
-					<StatsFilter />
+			<div className='card mb-2 border-light'>
+				<div className='card-body'>
+					<div className='d-flex flex-column'>
+						<h1 className='text-center text-secondary mb-3'>
+							Travel Statistics
+						</h1>
+						<div className='row mb-5'>
+							<StatsCard
+								color='primary'
+								period='past week'
+								travels={weekTravels}
+							/>
+							<StatsCard
+								color='success'
+								period='past month'
+								travels={monthTravels}
+							/>
+							<StatsCard
+								color='info'
+								period='past year'
+								travels={yearTravels}
+							/>
+							<StatsCard
+								color='warning'
+								period='all travels'
+								travels={allTravels}
+							/>
+						</div>
+						<div className='row'>
+							<SwiperHotel hotels={mostVisitedHotels} />
+							<StatsFilter />
+						</div>
+					</div>
 				</div>
 			</div>
 		);
 	}
-	return <span>Please wait...</span>;
+	return (
+		<div className='card mb-2 border-light'>
+			<div className='card-body'>
+				<LoadingPlaceholder />
+			</div>
+		</div>
+	);
 };
 
 TravelStats.propTypes = {

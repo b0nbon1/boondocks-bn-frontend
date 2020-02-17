@@ -23,8 +23,9 @@ import { BrowserRouter } from 'react-router-dom';
 import EditProfileComponent from '../../components/EditProfileContainer';
 import Cookies from "universal-cookie";
 import token from '../../__mocks__/token';
-import MockDate from 'mockdate';
-
+import { getAllRequests } from "../../lib/services/requests.service";
+import { getUserBooking } from "../../lib/services/booking.service";
+import { getAllHotels } from "../../store/actions/accomodations/getAccomodationActions";
 global.localStorage = localStorage;
 
 global.localStorage.setItem("bn_user_data", `{
@@ -39,6 +40,11 @@ global.localStorage.setItem("bn_user_data", `{
 }`);
 
 jest.mock("../../lib/services/user.service");
+jest.mock("../../lib/services/requests.service");
+jest.mock("../../lib/services/booking.service");
+jest.mock("../../store/actions/users/usersActions");
+jest.mock("../../store/actions/accomodations/getAccomodationActions");
+
 jest.mock("universal-cookie");
 Cookies.mockImplementation(() => ({ get: () => token }));
 
@@ -136,8 +142,27 @@ describe('User should be be able to view and edit profile', () => {
 			isEditing: true,
 			currentUserId: null
 		}
-	};
-
+  };
+  
+  getAllRequests.mockImplementation(() => Promise.resolve({
+    data: {
+      data: []
+    }
+  }));
+  getUserBooking.mockImplementation(() => Promise.resolve({
+    data: {
+      data: []
+    }
+  }));
+  getUsers.mockImplementation(() => Promise.resolve({
+    data: {
+      data: []
+    }
+  }));
+  getAllHotels.mockImplementation(() => Promise.resolve({
+    data: {data: []}
+  }))
+	getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
 	getUsers.mockImplementation(() => Promise.resolve(managers));
 	beforeEach(() => {
 		global.localStorage.setItem("bn_user_data", `{

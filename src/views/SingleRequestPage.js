@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import singleRequest from '../store/actions/requests/singleRequestActions';
 import SingleRequest from '../components/request/SingleRequest';
 import CommentRequest from '../components/request/CommentRequest';
+import LoadingPlaceholder from '../components/templates/LoadingPlaceholder';
 
 function SingleRequestPage(props) {
 	const {
@@ -37,7 +38,15 @@ function SingleRequestPage(props) {
 			</div>
 		);
 	}
-	return <h6>Please wait ...</h6>;
+	return (
+		<div className='container request'>
+			<div className='card'>
+				<div className='card-body'>
+					<LoadingPlaceholder />
+				</div>
+			</div>
+		</div>
+	);
 }
 
 SingleRequestPage.propTypes = {

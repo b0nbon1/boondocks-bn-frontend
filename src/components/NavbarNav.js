@@ -1,13 +1,26 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-array-index-key */
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import NavLinkItem from './templates/NavLinkItem';
 import UserAccount from './UserAccount';
+import { setPath } from '../store/actions/navbar/navbarActions';
 
-export const NavbarNav = ({ navItems, isAuthenticated, notifications }) => {
+export const NavbarNav = ({
+	navItems,
+	isAuthenticated,
+	notifications,
+	setPath,
+}) => {
 	const hasUserData = !!localStorage.bn_user_data;
 	useEffect(() => {}, [isAuthenticated]);
+
+	const history = useHistory();
+
+	useEffect(() => {
+		setPath(history.location.pathname);
+	}, [history.location.pathname]);
 	return (
 		<nav
 			data-testid='navbar-nav'
@@ -56,4 +69,6 @@ export const NavbarNav = ({ navItems, isAuthenticated, notifications }) => {
 	);
 };
 
-export default NavbarNav;
+export default connect(null, {
+	setPath,
+})(NavbarNav);

@@ -3,10 +3,15 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Info from './Info';
 import InfoCard from './InfoCard';
+import LoadingPlaceholder from '../../components/templates/LoadingPlaceholder';
 
-const Profile = ({ setIsEditing, profile, currentUser }) => {
+const Profile = ({ setIsEditing, profile, currentUser, cardStats }) => {
 	if (Object.keys(profile).length < 1) {
-		return <div>Please Wait....</div>;
+		return (
+			<div className='card profile border-light rounded'>
+				<LoadingPlaceholder />
+			</div>
+		);
 	}
 
 	const { userId } = JSON.parse(localStorage.getItem('bn_user_data'));
@@ -86,36 +91,46 @@ const Profile = ({ setIsEditing, profile, currentUser }) => {
 						<Info label='Gender' value={profile.gender} />
 					</div>
 					<div className='col-sm-6 col-md-6'>
-						<>
-							<div className='row pt-4 pb-2'>
-								<div className='col-sm-6 col-md-6'>
+						<div className='row pt-4 pb-2'>
+							<div className='col-sm-6 col-md-6'>
+								{cardStats[0] && (
 									<InfoCard
-										label='Trips Requested'
-										icon='fa fa-car'
-										number={20}
+										label={cardStats[0].label}
+										icon={cardStats[0].icon}
+										number={cardStats[0].number}
 									/>
-								</div>
-								<div className='col-sm-6 col-md-6'>
-									<InfoCard
-										label='Approved Trips'
-										icon='fa-check-circle'
-										number={20}
-									/>
-								</div>
+								)}
 							</div>
-							<div className='row mt-4'>
-								<div className='col-sm-6 col-md-6'>
+							<div className='col-sm-6 col-md-6'>
+								{cardStats[1] && (
 									<InfoCard
-										label='Denied requests'
-										icon='fa-times-circle'
-										number={2}
+										label={cardStats[1].label}
+										icon={cardStats[1].icon}
+										number={cardStats[1].number}
 									/>
-								</div>
-								<div className='col-sm-6 col-md-6'>
-									<InfoCard label='Notifications' icon='fa-bell' number={4} />
-								</div>
+								)}
 							</div>
-						</>
+						</div>
+						<div className='row mt-4'>
+							<div className='col-sm-6 col-md-6'>
+								{cardStats[2] && (
+									<InfoCard
+										label={cardStats[2].label}
+										icon={cardStats[2].icon}
+										number={cardStats[2].number}
+									/>
+								)}
+							</div>
+							<div className='col-sm-6 col-md-6'>
+								{cardStats[3] && (
+									<InfoCard
+										label={cardStats[3].label}
+										icon={cardStats[3].icon}
+										number={cardStats[3].number}
+									/>
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -126,6 +141,7 @@ Profile.propTypes = {
 	profile: PropTypes.instanceOf(Object),
 	currentUser: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 	setIsEditing: PropTypes.func.isRequired,
+	cardStats: PropTypes.array.isRequired,
 };
 Profile.defaultProps = {
 	currentUser: null,

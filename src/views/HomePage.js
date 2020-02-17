@@ -7,7 +7,8 @@ import HotelCard from '../components/accomodations/HotelCard';
 import { getAllHotels } from '../store/actions/accomodations/getAccomodationActions';
 import setAuthenticate from '../store/actions/authenticateAction';
 import checkRole from '../utils/checkRole';
-import updateNavbar from '../store/actions/navbar/navbarActions';
+import { updateNavbar } from '../store/actions/navbar/navbarActions';
+import LoadingPlaceholder from '../components/templates/LoadingPlaceholder';
 
 // eslint-disable-next-line no-shadow
 export const HomePage = ({
@@ -31,6 +32,7 @@ export const HomePage = ({
 		const Role = checkRole('suppliers') || checkRole('travel_administrator');
 		setRole(Role);
 	});
+
 	if (!loading && status === 'success') {
 		return (
 			<div className='container mt-7' data-testid='home-page'>
@@ -50,11 +52,26 @@ export const HomePage = ({
 							<HotelCard key={hotel.id} data={hotel} />
 						))}
 				</div>
+				{!data.length && (
+					<div data-testid='request-page' className='container pt-5'>
+						<div className='card'>
+							<div className='card-body text-center'>
+								<strong className='text-muted mr-2'>
+									Seems there is nothing here, Hotels are to be registered soon!
+								</strong>
+							</div>
+						</div>
+					</div>
+				)}
 			</div>
 		);
 	}
 
-	return <></>;
+	return (
+		<div className='container pt-5'>
+			<LoadingPlaceholder />
+		</div>
+	);
 };
 
 export const mapStateToProps = state => ({

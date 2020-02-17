@@ -10,7 +10,8 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import setAuthenticate from '../../store/actions/authenticateAction';
-import updateNavbar from '../../store/actions/navbar/navbarActions';
+import { updateNavbar } from '../../store/actions/navbar/navbarActions';
+import clearStats from '../../store/actions/profile/profileStatsActions';
 
 /**
  * Logout
@@ -20,7 +21,7 @@ import updateNavbar from '../../store/actions/navbar/navbarActions';
  * @returns {*}
  * @constructor
  */
-export const Logout = ({ history, setAuthState, updateNavbar }) => (
+export const Logout = ({ history, setAuthState, updateNavbar, clearStats }) => (
 	<button
 		type='button'
 		className='dropdown-item'
@@ -28,6 +29,7 @@ export const Logout = ({ history, setAuthState, updateNavbar }) => (
 		onClick={() => {
 			setAuthState(false);
 			updateNavbar();
+			clearStats();
 			history.push('/home');
 		}}
 	>
@@ -53,5 +55,6 @@ export default withRouter(
 	connect(null, {
 		setAuthState: setAuthenticate,
 		updateNavbar,
+		clearStats,
 	})(Logout),
 );

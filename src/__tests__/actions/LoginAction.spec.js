@@ -5,9 +5,11 @@ import {
   LOGIN_FAILURE,
   LOGIN_SUCCESS,
   BUTTON_LOADING,
+  LOADING,
 } from '../../store/actions/types';
 import login from '../../store/actions/loginActions';
 import apiCall from '../../utils/api';
+import actionFunc from '../../utils/actionFunc';
 
 let store;
 const middlewares = [thunk];
@@ -39,14 +41,17 @@ describe('Login Actions Test Suite', () => {
         payload: true,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, true),
       {
         payload: "invalid credentials",
         type: LOGIN_FAILURE
       },
+      actionFunc(LOADING, false),
       {
         payload: false,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, false),
     ];
     store = mockStore({});
     const email = 'wrong_email@google.com';
@@ -80,14 +85,17 @@ describe('Login Actions Test Suite', () => {
         payload: true,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, true),
       {
         payload: 'success',
         type: LOGIN_SUCCESS
       },
+      actionFunc(LOADING, false),
       {
         payload: false,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, false),
     ];
     store = mockStore({});
     const email = 'valid_user@google.com';

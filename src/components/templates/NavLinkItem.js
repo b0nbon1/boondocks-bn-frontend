@@ -23,7 +23,9 @@ export const NavLinkItem = ({
 	const [unreadNotifications, setUnreadNotifications] = useState([]);
 
 	useEffect(() => {
-		if (haspopup) setNotifications();
+		if (haspopup) {
+			setNotifications();
+		}
 	}, [readNotifications]);
 
 	useEffect(() => {

@@ -8,12 +8,18 @@ import {
 	setIsEditing,
 	revertChanges,
 } from '../store/actions/profile/profileActions';
+import { getRequests } from '../store/actions/requestAction';
 import setAuthenticate from '../store/actions/authenticateAction';
 import Profile from '../views/profile/ProfileView';
-import updateNavbar from '../store/actions/navbar/navbarActions';
+import { updateNavbar } from '../store/actions/navbar/navbarActions';
+import { getBooking } from '../store/actions/bookingActions';
+import { getAllHotels } from '../store/actions/accomodations/getAccomodationActions';
+import { fetchUsers } from '../store/actions/users/usersActions';
+import clearStats from '../store/actions/profile/profileStatsActions';
+import { notification } from '../store/actions/notificationAction';
 
 class ViewProfileContainer extends Component {
-	componentDidMount() {
+	async componentDidMount() {
 		const { props } = this;
 		props.setAuthenticate(true);
 		props.updateNavbar();
@@ -21,17 +27,35 @@ class ViewProfileContainer extends Component {
 		if (props.match.params.userId || user) {
 			const userId = props.match.params.userId || user.userId;
 			props.fetchUserProfile(userId);
+
+			const canViewRequestsAndNotifications = ['requester', 'manager'];
+			const canViewBookings = ['travel_administrator', 'suppliers'];
+			const canViewUsers = ['super_administrator'];
+
+			const { cardStats } = props;
+			if (cardStats[user.role].length < 4) {
+				await Promise.all([
+					canViewRequestsAndNotifications.includes(user.role) &&
+						props.getRequests('all'),
+					canViewBookings.includes(user.role) &&
+						props.getBooking() &&
+						props.getAllHotels(),
+					canViewUsers.includes(user.role) && props.fetchUsers(),
+				]);
+			}
 		}
 	}
 
 	render() {
 		const { props } = this;
+		const user = JSON.parse(localStorage.getItem('bn_user_data'));
 		return (
 			<div className='container profile-container p-3'>
 				<Profile
 					profile={props.profile}
 					currentUser={props.currentUserId}
 					setIsEditing={props.setIsEditing}
+					cardStats={props.cardStats[user.role]}
 				/>
 			</div>
 		);
@@ -45,6 +69,7 @@ const mapStateToProps = state => ({
 	editErrors: state.profileState.errors,
 	loading: state.loadingState.buttonLoading,
 	isEditing: state.profileState.isEditing,
+	cardStats: state.profileCardsState.stats,
 });
 export default connect(mapStateToProps, {
 	fetchUserProfile,
@@ -54,6 +79,12 @@ export default connect(mapStateToProps, {
 	revertChanges,
 	setAuthenticate,
 	updateNavbar,
+	getRequests,
+	getBooking,
+	fetchUsers,
+	clearStats,
+	notification,
+	getAllHotels,
 })(ViewProfileContainer);
 
 ViewProfileContainer.propTypes = {
@@ -68,6 +99,12 @@ ViewProfileContainer.propTypes = {
 	}),
 	profile: PropTypes.instanceOf(Object).isRequired,
 	setIsEditing: PropTypes.func.isRequired,
+	updateNavbar: PropTypes.func.isRequired,
+	getBooking: PropTypes.func.isRequired,
+	fetchUsers: PropTypes.func.isRequired,
+	getRequests: PropTypes.func.isRequired,
+	cardStats: PropTypes.object.isRequired,
+	getAllHotels: PropTypes.func.isRequired,
 };
 
 ViewProfileContainer.defaultProps = {

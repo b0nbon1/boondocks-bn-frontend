@@ -32,7 +32,7 @@ import ChatView from './views/ChatView';
 import BookingContainer from './components/BookingContainer';
 import ViewBooking from './components/ViewBookingContainer';
 import TravelStatsPage from './views/TravelStatsPage';
-import updateNavbar from './store/actions/navbar/navbarActions';
+import { updateNavbar } from './store/actions/navbar/navbarActions';
 import setAuthenticate from './store/actions/authenticateAction';
 import { nowSeconds } from './lib/time';
 

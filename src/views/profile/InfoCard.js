@@ -18,7 +18,7 @@ const InfoCard = ({ number, icon, label }) => {
 };
 
 InfoCard.propTypes = {
-	number: PropTypes.number.isRequired,
+	number: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 	icon: PropTypes.string.isRequired,
 	label: PropTypes.string.isRequired,
 };

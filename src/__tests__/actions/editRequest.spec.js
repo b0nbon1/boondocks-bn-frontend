@@ -2,6 +2,8 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { updateTrip } from '../../store/actions/requests/editTripActions';
 import apiCall from '../../utils/api';
+import actionFunc from '../../utils/actionFunc';
+import { LOADING } from '../../store/actions/types';
 jest.mock('../../utils/api');
 
 let store;
@@ -22,6 +24,7 @@ describe('Update trips Test Suite', () => {
          "payload": true,
          "type": "BUTTON_LOADING",
        },
+       actionFunc(LOADING, true),
       {
          "payload": {
            "message": "success",
@@ -32,8 +35,9 @@ describe('Update trips Test Suite', () => {
       {
          "payload": false,
          "type": "BUTTON_LOADING",
-       },
-      ];
+      },
+      actionFunc(LOADING, false),
+    ];
     store = mockStore({});
     await store.dispatch(updateTrip())
     .then(async () => {
@@ -62,6 +66,7 @@ describe('Update trips Test Suite', () => {
         "payload": true,
         "type": "BUTTON_LOADING",
       },
+      actionFunc(LOADING, true),
       {
       "payload": {
         "results": "success",
@@ -78,6 +83,7 @@ describe('Update trips Test Suite', () => {
       "payload": false,
       "type": "BUTTON_LOADING",
       },
+      actionFunc(LOADING, false),
       ];
     store = mockStore({});
     await store.dispatch(updateTrip())

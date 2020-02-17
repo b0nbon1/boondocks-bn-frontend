@@ -27,10 +27,6 @@ class EditProfile extends Component {
 		});
 	}
 
-	componentWillUnmount() {
-		this.setState()
-	}
-
 	/**
 	 * Save user input to the local state
 	 * @param event

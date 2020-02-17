@@ -16,11 +16,6 @@ export class Notifications extends Component {
 		this.state = {};
 	}
 
-	componentDidMount() {
-		const { props } = this;
-		props.notification();
-	}
-
 	handleRedirect(requestId, notificationId) {
 		const { history, markOneAsRead } = this.props;
 		markOneAsRead(notificationId);

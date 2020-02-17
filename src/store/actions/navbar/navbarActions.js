@@ -24,4 +24,8 @@ const updateNavbar = () => dispatch => {
 	);
 };
 
-export default updateNavbar;
+const setPath = path => dispatch => {
+	dispatch(actionFunc(NAVBAR_TYPES.NAVBAR_PATH_CHANGED, path));
+};
+
+export { updateNavbar, setPath };
