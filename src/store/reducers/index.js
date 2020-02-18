@@ -30,6 +30,7 @@ import tripStatsReducer from './tripStatsReducer';
 import rateAccomodationReducer from './rateAccomodationReducer';
 import markAsReadReducer from './markAsReadReducer';
 import feedbackReducer from './feedbackReducer';
+import documentsReducer from './documentsReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
@@ -63,6 +64,7 @@ const reducers = combineReducers({
 	tripStatState: tripStatsReducer,
 	rateAccomodationState: rateAccomodationReducer,
 	feedbackState: feedbackReducer,
+	documentsState: documentsReducer,
 });
 
 export default reducers;
