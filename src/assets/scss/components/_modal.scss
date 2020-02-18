@@ -69,6 +69,10 @@
   content: '';
 }
 
+.hide-overlay:after {
+  background: transparent !important;
+}
+
 .view {
   will-change: transform;
   width: 100%;
@@ -78,3 +82,17 @@
   transition: -webkit-transform 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946);
   transition: transform 0.3s cubic-bezier(0.465, 0.183, 0.153, 0.946);
 }
+
+
+.documentPreview {
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 35px;
+  height: 0;
+  iframe {
+    width: 100%;
+  }
+}
+
+
+

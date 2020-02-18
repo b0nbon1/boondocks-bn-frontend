@@ -51,8 +51,6 @@ export const getAllHotels = () => async (dispatch, getState) => {
 
 		dispatch(actionFunc(LOADING, false));
 	} catch (error) {
-		console.log(error);
-
 		dispatch(actionFunc(FETCH_HOTEL_FAIL, error.response.data));
 		dispatch(actionFunc(LOADING, false));
 		toast('error', error.response.data.message);

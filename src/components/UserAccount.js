@@ -32,6 +32,11 @@ const UserAccount = () => {
 		}
 	}, [profilePicture]);
 
+	let role = '';
+	if (localStorage.bn_user_data) {
+		role = JSON.parse(localStorage.getItem('bn_user_data')).role;
+	}
+
 	return (
 		<li
 			data-testid='user-account'
@@ -56,11 +61,13 @@ const UserAccount = () => {
 				)}
 			</div>
 			<div className='dropdown-menu'>
-				{accountLinks.map((item, idx) => (
-					<Link key={idx} className='dropdown-item' to={item.linkRoute}>
-						{item.linkText}
-					</Link>
-				))}
+				{[...accountLinks.general, ...(role && accountLinks[role])].map(
+					(item, idx) => (
+						<Link key={idx} className='dropdown-item' to={item.linkRoute}>
+							{item.linkText}
+						</Link>
+					),
+				)}
 				<Logout />
 			</div>
 		</li>

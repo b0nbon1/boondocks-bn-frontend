@@ -16,6 +16,10 @@ const navItemObjects = {
 			linkText: 'Booking',
 			linkRoute: '/booking',
 		},
+		{
+			linkText: 'Travel Documents',
+			linkRoute: '/documents',
+		},
 	],
 	travel_team_member: [],
 	manager: [
