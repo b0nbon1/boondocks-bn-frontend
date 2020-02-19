@@ -41,18 +41,27 @@ const fetchCreateTripData = () => async dispatch => {
 const createTrip = (userRequest, endpoint, profile) => async dispatch => {
 	dispatch(actionFunc(BUTTON_LOADING, true));
 	const { userId } = JSON.parse(localStorage.bn_user_data);
-
 	const userProfile = transformProfile(profile, dispatch);
 
 	if (!userProfile) {
 		dispatch(actionFunc(BUTTON_LOADING, false));
 		return false;
 	}
-	await updateUserProfile(userProfile);
 
+	const updatedProfileData = { ...userProfile };
+	delete updatedProfileData.profilePicture;
+
+	const objectKeys = Object.keys(updatedProfileData);
+	const data = new FormData();
+
+	objectKeys.forEach(key => {
+		data.append(key, userProfile[key]);
+	});
+
+	await updateUserProfile(data);
 	const profileData = await getUserProfile(userId);
-
 	const updatedProfile = profileData.data.data;
+
 	dispatch(
 		actionFunc(ACTION_TYPES.SAVE_PROFILE_SUCCESS, {
 			updatedProfile: {

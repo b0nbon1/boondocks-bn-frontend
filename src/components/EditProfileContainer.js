@@ -25,7 +25,6 @@ class EditProfileContainer extends Component {
 		return (
 			<div className='container profile-container p-3'>
 				<>
-					<h1 className='text-center text-secondary'>Update Profile</h1>
 					<EditProfile
 						profile={props.profile}
 						managers={props.managers}

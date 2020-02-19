@@ -18,7 +18,11 @@ export const getUserProfile = async userId => {
  */
 export const updateUserProfile = async userProfile => {
 	return await api
-		.patch(`user/update-profile`, userProfile)
+		.patch(`user/update-profile`, userProfile, {
+			headers: {
+				'content-type': 'multipart/form-data',
+			},
+		})
 		.catch(axiosErrorHandler);
 };
 

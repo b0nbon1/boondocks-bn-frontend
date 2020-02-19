@@ -130,6 +130,7 @@ export class CreateAccomodation extends Component {
 							value={state.imageName}
 							onChange={event => this.handleFile(event)}
 							label='Choose image'
+							required='required'
 						/>
 					</div>
 					<div className='ml-5'>

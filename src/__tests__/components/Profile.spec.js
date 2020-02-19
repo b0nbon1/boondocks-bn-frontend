@@ -23,7 +23,6 @@ import { BrowserRouter } from 'react-router-dom';
 import EditProfileComponent from '../../components/EditProfileContainer';
 import Cookies from "universal-cookie";
 import token from '../../__mocks__/token';
-import MockDate from 'mockdate';
 
 global.localStorage = localStorage;
 
@@ -197,10 +196,10 @@ describe('User should be be able to view and edit profile', () => {
 
 	test('User can edit profile information', async () => {
 		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
-    const { getByTestId, getByText, getByDisplayValue, getByPlaceholderText } = render(EditComponent, initialState);
+    const { getByText, getByDisplayValue, getByPlaceholderText } = render(EditComponent, initialState);
 
-    const profileTitle = await waitForElement(
-			() => getByText('Update Profile')
+    await waitForElement(
+			() => getByDisplayValue('requester@user.com')
 		);
     expect(getByDisplayValue('requester@user.com')).toBeInTheDocument();
 		const [emailField, departmentField, firstNameField] = await waitForElement(
@@ -228,9 +227,9 @@ describe('User should be be able to view and edit profile', () => {
 
 	test('User can revert profile changes', async () => {
 		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
-		const { getByTestId, getByText, getByPlaceholderText } = render(EditComponent, initialState);
-		const profileTitle = await waitForElement(
-			() => getByText('Update Profile')
+		const { getByDisplayValue, getByText, getByPlaceholderText } = render(EditComponent, initialState);
+		await waitForElement(
+			() => getByDisplayValue('requester@user.com')
     );
 
 		const [emailField, cancelButton] = await waitForElement(
@@ -246,9 +245,9 @@ describe('User should be be able to view and edit profile', () => {
 
 	test('User can save profile changes', async () => {
 		getUserProfile.mockImplementation(() => Promise.resolve(userWithoutManager));
-		const { getByText, getByTestId, getByPlaceholderText, getByLabelText } = render(EditComponent, initialState);
-		const profileTitle = await waitForElement(
-			() => getByText('Update Profile')
+		const { getByText, getByDisplayValue, getByPlaceholderText, getByLabelText } = render(EditComponent, initialState);
+		await waitForElement(
+			() => getByDisplayValue('requester@user.com')
     );
 		const [phoneField, saveButton, dateField, managerField, firstNameField] = await waitForElement(
 			() => [
@@ -288,9 +287,9 @@ describe('User should be be able to view and edit profile', () => {
 
 	test('User can not save profile changes with errors', async () => {
 		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
-		const { getByText, getByPlaceholderText } = render(EditComponent, initialState);
-		const profileTitle = await waitForElement(
-			() => getByText('Update Profile')
+		const { getByText, getByPlaceholderText, getByDisplayValue } = render(EditComponent, initialState);
+		await waitForElement(
+			() => getByDisplayValue('requester@user.com')
     );
 
 		const [emailField, currencyField, saveButton, lineManagerField, languageField, genderField] = await waitForElement(
@@ -326,7 +325,49 @@ describe('User should be be able to view and edit profile', () => {
 
 		fireEvent.blur(emailField);
 		fireEvent.click(saveButton);
+  });
+  
+  // my tests start here
+  test('User can edit profile information including profile picture upload', async () => {
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+    const { getByTestId, getByText, getByDisplayValue, getByPlaceholderText } = render(EditComponent, initialState);
+
+    await waitForElement(
+			() => getByDisplayValue('requester@user.com')
+		);
+    expect(getByDisplayValue('requester@user.com')).toBeInTheDocument();
+		const [emailField, departmentField, firstNameField, profilePictureField, saveButton] = await waitForElement(
+			() => [
+				getByPlaceholderText('Enter Email'),
+        getByPlaceholderText('Enter Department'),
+        getByPlaceholderText('Enter First Name'),
+        getByTestId('profilePicture'),
+        getByText('Save Changes'),
+			]
+    );
+
+    const file = new File(['(⌐□_□)'], 'chucknorris.png', {
+      type: 'image/png',
+    })
+
+    Object.defineProperty(profilePictureField, 'files', {
+      value: [file],
+    })
+
+    fireEvent.change(firstNameField, { target: { value: ''}});
+    fireEvent.blur(firstNameField);
+
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+    fireEvent.blur(firstNameField);
+
+		fireEvent.change(emailField, { target: { value: 'user@'}});
+		fireEvent.blur(emailField);
+		expect(getByText('Email is not valid')).toBeInTheDocument();
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+		fireEvent.change(emailField, { target: { value: 'user@gmail.com'}});
+    fireEvent.blur(emailField);
+    fireEvent.change(profilePictureField);
+    fireEvent.click(saveButton);
 	});
-
 });
-

@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import propTypes from 'prop-types';
 import Accordion from '../templates/Accordion';
@@ -86,7 +88,8 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'gender',
 									value: event.target.value,
-								})}
+								})
+							}
 							classNames='form-control form-control-sm'
 						/>
 
@@ -109,7 +112,8 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'lineManager',
 									value: event.target.value,
-								})}
+								})
+							}
 							classNames={`form-control form-control-sm ${errors.lineManagerError &&
 								'is-invalid'}`}
 						/>
@@ -142,7 +146,8 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'preferredLanguage',
 									value: event.target.value,
-								})}
+								})
+							}
 							classNames='form-control form-control-sm'
 						/>
 						<div className='form-group'>
