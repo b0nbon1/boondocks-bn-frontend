@@ -41,7 +41,8 @@ Start the built project with ```npm start```
 
 ## Application deployed on 🚀
 
-- [Heroku](https://boondocks-bn-frontend-staging.herokuapp.com)
+- [Heroku Staging](https://boondocks-bn-frontend-staging.herokuapp.com)
+- [Heroku Production](https://boondocks-bn-frontend.herokuapp.com/)
 
 ## View components documentation :page_facing_up:
 Start the storybook dashboard with ```npm run storybook```

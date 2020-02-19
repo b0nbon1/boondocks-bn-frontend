@@ -10,8 +10,10 @@ import {
 } from "../../../lib/services/notificationService";
 import { wait, waitForElement } from "@testing-library/dom";
 import localStorage from "../../../__mocks__/LocalStorage";
+import { getUserProfile, getUsers } from '../../../lib/services/user.service';
 
 jest.mock("../../../lib/services/notificationService");
+jest.mock("../../../lib/services/user.service");
 jest.mock("socket.io-client");
 
 const initialState = {
@@ -100,6 +102,59 @@ const initialState = {
   },
   updateNotificationState: {
     newNotification: null
+  },
+  profileState: {
+    userProfile: {},
+    managers: [],
+  }
+};
+
+const userProfile = {
+  data: {
+    data: {
+      firstName: "Requester",
+      lastName: "User",
+      email: "requester@user.com",
+      isVerified: true,
+      birthDate: "2001-11-11T00:00:00.000Z",
+      residenceAddress: '',
+      preferredLanguage: "French USA",
+      preferredCurrency: "usd",
+      department: "marketing",
+      gender: "male",
+      lastLogin: "2020-01-04T08:19:43.909Z",
+      role: "requester",
+      phoneNumber: "0786466253",
+      lineManager: {
+        id: 7,
+        firstName: "john",
+        lastName: "doe",
+      },
+    }
+  }
+};
+
+const managers = {
+  data: {
+    data: [
+      {
+        id: 2,
+        firstName: "john",
+        lastName: "doe",
+        email: "john@barefoot.com",
+        birthDate: '2001-11-11T00:00:00.000Z',
+        residenceAddress: '',
+        lineManagerId: '',
+        preferredLanguage: '',
+        preferredCurrency: '',
+        department: '',
+        gender: '',
+        role: "manager",
+        phoneNumber: '',
+        createdAt: "2019-12-11T18:15:54.157Z",
+        updatedAt: "2019-12-12T11:05:52.591Z"
+      }
+    ]
   }
 };
 
@@ -148,6 +203,8 @@ afterEach(cleanup);
 describe("NavLinkItem template component", () => {
 
   it("should display \"No unread notifications\" when no notification is present", () => {
+    getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
     const { getByText } = render(
       <BrowserRouter>
         <Navbar/>
@@ -158,6 +215,9 @@ describe("NavLinkItem template component", () => {
   });
 
   it("should display \"Mark all as read\" when there are some notifications", async () => {
+    getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
+
     const { getByText } = render(
       <BrowserRouter>
         <Navbar/>
@@ -194,6 +254,8 @@ describe("NavLinkItem template component", () => {
   });
 
   it("should display \"Mark all as read\" when one notification was read and others are still there", () => {
+    getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
     const { getByText } = render(
       <BrowserRouter>
         <Navbar/>

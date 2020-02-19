@@ -1,3 +1,6 @@
+/* eslint-disable max-len */
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,6 +11,8 @@ import SelectInput from '../templates/SelectInput';
 import Toast from '../../lib/toast';
 import LoadingButton from '../templates/Button';
 import { clearErrors } from '../../store/actions/profile/profileActions';
+import InputFile from '../templates/InputFile';
+import profilePicturePlaceholder from '../../assets/images/profilePicturePlaceholder.png';
 
 class EditProfile extends Component {
 	constructor(props) {
@@ -17,6 +22,10 @@ class EditProfile extends Component {
 
 	componentDidMount() {
 		const { props } = this;
+		const { profile } = props;
+		this.setState({
+			currentProfilePic: profile.profilePicture,
+		});
 		props.clearErrors();
 	}
 
@@ -25,10 +34,6 @@ class EditProfile extends Component {
 		this.setState({
 			[name]: '',
 		});
-	}
-
-	componentWillUnmount() {
-		this.setState()
 	}
 
 	/**
@@ -48,6 +53,25 @@ class EditProfile extends Component {
 		});
 	}
 
+	readURL(input) {
+		const reader = new FileReader();
+		reader.onload = e => {
+			this.setState({
+				currentProfilePic: e.target.result,
+			});
+		};
+		reader.readAsDataURL(input);
+	}
+
+	handleFile({ saveData, event }) {
+		const newFile = event.target.files[0];
+		this.readURL(newFile);
+		saveData({ profilePicture: newFile });
+		this.setState({
+			imageName: newFile.name,
+		});
+	}
+
 	handleSaveChanges({ profile, saveProfile, errors }) {
 		let error;
 		Object.keys(errors).forEach(key => {
@@ -59,7 +83,13 @@ class EditProfile extends Component {
 			Toast('error', 'Errors found, please review information');
 			return;
 		}
-		saveProfile(profile);
+		if (typeof profile.profilePicture === 'string') {
+			const saveProfileObj = { ...profile };
+			delete saveProfileObj.profilePicture;
+			saveProfile(saveProfileObj);
+		} else {
+			saveProfile(profile);
+		}
 	}
 
 	render() {
@@ -73,6 +103,7 @@ class EditProfile extends Component {
 			isEditing,
 			revertChanges,
 		} = this.props;
+
 		const { state, handleSaveChanges } = this;
 		if (Object.keys(profile).length < 1) {
 			return <div>Please Wait....</div>;
@@ -93,6 +124,22 @@ class EditProfile extends Component {
 						});
 					}}
 				>
+					<div className='profilePicContainer mb-3'>
+						<InputFile
+							name='profilePicture'
+							testId='profilePicture'
+							accept='image/png, image/jpeg, image/jpg'
+							value={state.imageName || ''}
+							onChange={event => this.handleFile({ saveData, event })}
+						/>
+						<div className='profilePicDiv'>
+							<img
+								src={state.currentProfilePic || profilePicturePlaceholder}
+								className='img-thumbnail profilePicImg rounded-circle'
+								alt='Current ProfilePic'
+							/>
+						</div>
+					</div>
 					<div className='grid-input'>
 						{profileFields.map(
 							({ id, placeholder, name, type, label, error }) => (
@@ -140,7 +187,8 @@ class EditProfile extends Component {
 							error={errors.lineManagerError}
 							onChange={event => this.handleInputChange(event)}
 							onBlur={event =>
-								this.handleSave({ saveData, name: 'lineManager', event })}
+								this.handleSave({ saveData, name: 'lineManager', event })
+							}
 							classNames={`form-control form-control-sm 
               ${errors.lineManagerError && 'is-invalid'}`}
 						/>
@@ -153,7 +201,8 @@ class EditProfile extends Component {
 							option={profileSelect.preferredCurrency}
 							onChange={event => this.handleInputChange(event)}
 							onBlur={event =>
-								this.handleSave({ saveData, name: 'preferredCurrency', event })}
+								this.handleSave({ saveData, name: 'preferredCurrency', event })
+							}
 							classNames='form-control form-control-sm'
 						/>
 						<SelectInput
@@ -164,9 +213,11 @@ class EditProfile extends Component {
 							option={profileSelect.language}
 							onChange={event => this.handleInputChange(event)}
 							onBlur={event =>
-								this.handleSave({ saveData, name: 'preferredLanguage', event })}
+								this.handleSave({ saveData, name: 'preferredLanguage', event })
+							}
 							classNames='form-control form-control-sm'
 						/>
+						<span />
 					</div>
 					<div className='row justify-content-center'>
 						<LoadingButton
