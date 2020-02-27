@@ -48,7 +48,11 @@ const request = {
 			   updatedAt: "2020-01-14T18:03:40.451Z",
 			   hotel:{ 
 				   name: "Marriot Hotel"
-			   },
+				 },
+				 booking: {
+					amount: "40.00",
+					paymentType: "unpaid"
+					},
 			   going: {
 				   country: "Uganda",
 				   city: "Kampala"

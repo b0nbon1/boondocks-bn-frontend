@@ -94,7 +94,7 @@ class BookingContainer extends Component {
 		const { props } = this;
 		const { errors, ...bookingInfo } = this.state;
 		await props.book(bookingInfo);
-		props.history.push('/booking');
+		props.history.push('/bookings/payment');
 	}
 
 	handleChooseRoom(room) {

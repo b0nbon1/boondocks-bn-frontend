@@ -1,16 +1,26 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { Component } from 'react';
 import propTypes from 'prop-types';
-import Accordion from '../templates/Accordion';
-import InputForm from '../templates/InputForm';
-import SelectInput from '../templates/SelectInput';
-import { profileTravelFields, profileSelect } from '../../utils/profileFields';
+import toast from '../../../lib/toast';
+import Button from '../../templates/Button';
+import InputForm from '../../templates/InputForm';
+import SelectInput from '../../templates/SelectInput';
+import {
+	profileTravelFields,
+	profileSelect,
+} from '../../../utils/profileFields';
 
-export class TravelProfile extends Component {
+export class UserDetails extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			remember: false,
 		};
+	}
+
+	async componentDidMount() {
+		const { props } = this;
+		this.setState({ ...props.data });
 	}
 
 	handleSave({ saveData, name, value }) {
@@ -37,6 +47,25 @@ export class TravelProfile extends Component {
 		});
 	}
 
+	saveAndContinue(e) {
+		e.preventDefault();
+		const { errors } = this.props;
+		const { handleData, nextStep, profile } = this.props;
+		let error;
+		Object.keys(errors).forEach(key => {
+			if (errors[key] !== null) {
+				error = 1;
+			}
+		});
+		if (error === 1) {
+			toast('error', 'Errors found, please review information');
+			return;
+		}
+
+		handleData('profile', profile);
+		nextStep();
+	}
+
 	render() {
 		const { saveData, managers, errors } = this.props;
 		const { state } = this;
@@ -49,7 +78,14 @@ export class TravelProfile extends Component {
 
 		return (
 			<div>
-				<Accordion>
+				<div className='card-header w-100 bg-white'>
+					<h6 className='m-0 font-weight-bold text-primary'>User Details</h6>
+				</div>
+				<form
+					data-testid='form-user'
+					onSubmit={event => this.saveAndContinue(event)}
+					className='w-75 m-auto'
+				>
 					<div className='grid-form request-profile'>
 						{profileTravelFields.map(
 							({ id, placeholder, name, type, label, error }) => (
@@ -62,13 +98,13 @@ export class TravelProfile extends Component {
 									label={label}
 									onChange={event => this.handleInputChange(event)}
 									error={errors[error]}
+									required
 									onBlur={event =>
 										this.handleSave({
 											saveData,
 											name,
 											value: event.target.value,
-										})
-									}
+										})}
 									classNames={`form-control form-control-sm ${errors[error] &&
 										'is-invalid'}`}
 								/>
@@ -86,7 +122,9 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'gender',
 									value: event.target.value,
-								})}
+								})
+							}
+							required
 							classNames='form-control form-control-sm'
 						/>
 
@@ -102,6 +140,7 @@ export class TravelProfile extends Component {
 								obj.value = manager.id;
 								return obj;
 							})}
+							required
 							error={errors.lineManagerError}
 							onChange={event => this.handleInputChange(event)}
 							onBlur={event =>
@@ -109,7 +148,8 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'lineManager',
 									value: event.target.value,
-								})}
+								})
+						}
 							classNames={`form-control form-control-sm ${errors.lineManagerError &&
 								'is-invalid'}`}
 						/>
@@ -126,8 +166,8 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'preferredCurrency',
 									value: event.target.value,
-								})
-							}
+								})}
+							required
 							classNames='form-control form-control-sm'
 						/>
 						<SelectInput
@@ -142,7 +182,8 @@ export class TravelProfile extends Component {
 									saveData,
 									name: 'preferredLanguage',
 									value: event.target.value,
-								})}
+								})
+							}
 							classNames='form-control form-control-sm'
 						/>
 						<div className='form-group'>
@@ -163,7 +204,6 @@ export class TravelProfile extends Component {
 									id='customCheck1'
 									defaultChecked={profile.remember}
 								/>
-								{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
 								<label className='custom-control-label' htmlFor='customCheck1'>
 									Remember Information
 									<i
@@ -176,17 +216,40 @@ export class TravelProfile extends Component {
 							</div>
 						</div>
 					</div>
-				</Accordion>
+					<div className='w-100'>
+						<Button
+							testId='nextStep'
+							classNames='btn btn-primary mr-5 float-right'
+							type='submit'
+							value='Continue'
+						/>
+					</div>
+				</form>
 			</div>
 		);
 	}
 }
 
-TravelProfile.propTypes = {
+export const mapStateToProps = state => ({
+	profile: state.profileState.userProfile,
+	currentUserId: state.profileState.currentUserId,
+	managers: state.profileState.managers,
+	errors: state.profileState.errors,
+	isEditing: state.profileState.isEditing,
+});
+
+UserDetails.propTypes = {
 	profile: propTypes.instanceOf(Object).isRequired,
 	managers: propTypes.instanceOf(Array).isRequired,
 	errors: propTypes.instanceOf(Object).isRequired,
 	saveData: propTypes.func.isRequired,
+	handleData: propTypes.func.isRequired,
+	data: propTypes.instanceOf(Object),
+	nextStep: propTypes.func.isRequired,
 };
 
-export default TravelProfile;
+UserDetails.defaultProps = {
+	data: null,
+};
+
+export default UserDetails;

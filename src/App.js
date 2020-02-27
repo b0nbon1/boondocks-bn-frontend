@@ -27,14 +27,15 @@ import UsersContainer from './components/UsersContainer';
 import CreateAccommodationPage from './views/accomodations/CreateAccomodationPage';
 import CreateRoomsPage from './views/accomodations/CreateRoomsPage';
 import SingleHotelPage from './views/accomodations/SingleHotelPage';
-import CreateRequestPage from './views/requests/CreateRequestPage';
 import ChatView from './views/ChatView';
 import BookingContainer from './components/BookingContainer';
 import ViewBooking from './components/ViewBookingContainer';
 import TravelStatsPage from './views/TravelStatsPage';
+import CreateRequestView from './views/requests/CreateRequestView';
 import updateNavbar from './store/actions/navbar/navbarActions';
 import setAuthenticate from './store/actions/authenticateAction';
 import { nowSeconds } from './lib/time';
+import BookingPayment from './components/payments/BookingPayment';
 
 /**
  * App component
@@ -72,6 +73,11 @@ export const App = ({ isAuthenticated, setAuthenticate, updateNavbar }) => {
 					<ProtectedRoute
 						path='/profile/:userId'
 						component={ViewProfileContainer}
+					/>
+					<ProtectedRoute
+						path='/bookings/payment'
+						exact
+						component={BookingPayment}
 					/>
 					<ProtectedRoute
 						path='/profile'
@@ -120,7 +126,7 @@ export const App = ({ isAuthenticated, setAuthenticate, updateNavbar }) => {
 					<ProtectedRoute
 						path='/trip-request'
 						exact
-						component={CreateRequestPage}
+						component={CreateRequestView}
 					/>
 					<ProtectedRoute path='/destinations' exact component={HomePage} />
 					<ProtectedRoute path='/approved-trips' exact component={HomePage} />

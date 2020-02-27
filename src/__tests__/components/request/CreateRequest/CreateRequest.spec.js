@@ -2,33 +2,33 @@ import React from "react";
 import {
 	cleanup,
 	fireEvent,
-	render as reactRender,
 	waitForElement,
 } from "@testing-library/react";
+import render from '../../../../__mocks__/render';
 import "@testing-library/jest-dom";
 import "@testing-library/jest-dom/extend-expect";
-import { applyMiddleware, createStore } from "redux";
-import reducers from "../../../store/reducers";
-import { Provider } from "react-redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-import thunk from "redux-thunk";
-import localStorage from "../../../__mocks__/LocalStorage";
+import localStorage from "../../../../__mocks__/LocalStorage";
 import Cookies from "universal-cookie";
-import CreateRequestPage from '../../../views/requests/CreateRequestPage';
+import CreateRequestView from '../../../../views/requests/CreateRequestView';
 import { BrowserRouter } from "react-router-dom";
-import { getLocationsWithHotels, getLocations, createATrip } from "../../../lib/services/createRequest.service";
-import { getUserProfile, getUsers } from '../../../lib/services/user.service';
+import { getLocationsWithHotels, getLocations, createATrip } from "../../../../lib/services/createRequest.service";
+import { getUserProfile, getUsers } from '../../../../lib/services/user.service';
 import {
 	getBookingData,
 	getUserRatingData,
-} from '../../../lib/services/rating.service';
+} from '../../../../lib/services/rating.service';
+import TripPayments from '../../../../components/request/forms/TripPayments';
 
 global.localStorage = localStorage;
+jest.mock('../../../../components/request/forms/TripPayments', () => {
+  const ComponentToMock = () => <div />;
+  return ComponentToMock;
+})
 jest.mock("universal-cookie");
-jest.mock("../../../lib/services/createRequest.service");
-jest.mock("../../../lib/services/user.service");
-jest.mock('../../../lib/services/booking.service');
-jest.mock('../../../lib/services/rating.service');
+jest.mock("../../../../lib/services/createRequest.service");
+jest.mock("../../../../lib/services/user.service");
+jest.mock('../../../../lib/services/booking.service');
+jest.mock('../../../../lib/services/rating.service');
 
 jest.mock("react-select", () => ({ options, value, onChange }) => {
   function handleChange(event) {
@@ -198,13 +198,39 @@ const responseData = {
 		status: 'success',
 		message: 'created',
 		data: {
-			id: 12,
-			status: 'open',
-			userId: 2,
-			type: 'single',
-			createdAt: '2020-01-23T12:53:10.588Z',
-			updatedAt: '2020-01-23T12:53:10.588Z',
-		},
+      "request": {
+          "id": 27,
+          "status": "open",
+          "userId": 2,
+          "type": "single",
+          "createdAt": "2020-02-18T08:12:40.401Z",
+          "updatedAt": "2020-02-18T08:12:40.401Z"
+      },
+      "bookingDetails": [
+          {
+              "id": 30,
+              "arrivalDate": "2030-08-01T00:00:00.000Z",
+              "leavingDate": null,
+              "roomImage": "",
+              "bookingAmount": "4000.00",
+              "createdAt": "2020-02-18T08:12:40.554Z",
+              "hotelName": "neak Hotel",
+              "roomName": "Virunga",
+              "roomUnitCost": 4000
+          },
+          {
+              "id": 31,
+              "arrivalDate": "2030-08-01T00:00:00.000Z",
+              "leavingDate": null,
+              "roomImage": "",
+              "bookingAmount": "4000.00",
+              "createdAt": "2020-02-18T08:12:40.549Z",
+              "hotelName": "neak Hotel",
+              "roomName": "Virunga",
+              "roomUnitCost": 4000
+          }
+      ]
+  },
 	},
 };
 
@@ -274,15 +300,6 @@ const ratingDataResponse = {
 			},
 		],
 	},
-};
-
-  const render = (ui, initialState = {}, options = {}) => {
-	const store = createStore(reducers, initialState,
-		composeWithDevTools(applyMiddleware(thunk)));
-	const Providers = ({ children }) => (
-		<Provider store={store}>{children}</Provider>
-	);
-	return reactRender(ui, { wrapper: Providers, ...options });
 };
 
 describe(' ', () => {
@@ -373,23 +390,18 @@ describe(' ', () => {
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
     createATrip.mockImplementation(() => Promise.resolve(responseData));
 		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
-		getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUsers.mockImplementation(() => Promise.resolve(managers));
+    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
+    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
 
     const initialState = {
       authState: {
         isAuthenticated: true
       }
     };
-    const { getByTestId, getByPlaceholderText } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+    const { getByTestId, getByPlaceholderText, debug, queryByText } = render(<BrowserRouter><CreateRequestView /></BrowserRouter>, initialState);
 
     const [
-      oneWayTypeField,
-      travelDateField,
-      leavingFromField,
-      goingToField,
-      selectHotelField,
-      selectRoomField,
-      reasonField,
 			departmentField,
 			firstNameField,
 			managerField,
@@ -397,15 +409,8 @@ describe(' ', () => {
 			currencyField,
 			languageField,
 			rememberInfo,
-      submitButton
+      submitButton,
     ] = await waitForElement(() => [
-      getByTestId('oneway'),
-      getByTestId('travelDate'),
-      getByTestId('leavingFrom'),
-      getByTestId('goingTo'),
-      getByTestId('hotel'),
-      getByTestId('room'),
-      getByTestId('reason'),
 			getByPlaceholderText('Enter Department'),
 			getByPlaceholderText('Enter First Name'),
 			getByPlaceholderText('Line Manager'),
@@ -413,21 +418,16 @@ describe(' ', () => {
 			getByPlaceholderText('Preferred Currency'),
 			getByPlaceholderText('Preferred Language'),
       getByTestId('remember'),
-      getByTestId('submitInput'),
+      getByTestId('form-user'),
     ]);
 
-    fireEvent.click(oneWayTypeField);
-    fireEvent.change(travelDateField, {target:{value: '2021-01-31'}});
-    fireEvent.change(leavingFromField, {target:{value: 1}});
-    fireEvent.change(goingToField, {target:{value: 7}});
-    fireEvent.change(selectHotelField, {target:{value: 1}});
-    fireEvent.change(selectRoomField, {target:{value: 9}});
-    fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
-
 		fireEvent.change(firstNameField, { target: { value: ''}});
-		fireEvent.blur(firstNameField);
-
-		fireEvent.change(firstNameField, { target: { value: 'user'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: 'd'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: ''}});
 		fireEvent.blur(firstNameField);
 
 		fireEvent.change(departmentField, { target: { value: ''}});
@@ -442,56 +442,53 @@ describe(' ', () => {
 		fireEvent.change(languageField, { target: { value: 'English'}});
 		fireEvent.blur(languageField);
 
-		fireEvent.change(managerField, { target: { value: '0'}});
-		fireEvent.blur(managerField);
+		fireEvent.change(managerField, { target: { value: '1'}});
+    fireEvent.blur(managerField);
+    
+    fireEvent.click(rememberInfo)
 
-		fireEvent.click(submitButton);
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
 
-		fireEvent.change(managerField, { target: { value: 1 }});
-		fireEvent.blur(managerField);
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
 
-		fireEvent.click(rememberInfo)
-
-    fireEvent.click(submitButton);
-
-  });
-
-  test('User can create one way trip without updating profile', async () => {
-    getLocations.mockImplementation(() => Promise.resolve(locations));
-    getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
-    createATrip.mockImplementation(() => Promise.resolve(responseData));
-    getUserRatingData.mockImplementation(() => Promise.resolve(ratingDataResponse));
-    getBookingData.mockImplementation(() => Promise.resolve(bookingDataResponse));
-
-    const initialState = {
-      authState: {
-        isAuthenticated: true
-      }
-    };
-    const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
-
+		fireEvent.change(departmentField, { target: { value: 'devops'}});
+    fireEvent.blur(departmentField);
+    
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+    
     const [
       oneWayTypeField,
       travelDateField,
       leavingFromField,
       goingToField,
+      selectHotelField,
+      selectRoomField,
       reasonField,
-      submitButton
+      submitTrip
     ] = await waitForElement(() => [
       getByTestId('oneway'),
       getByTestId('travelDate'),
       getByTestId('leavingFrom'),
       getByTestId('goingTo'),
+      getByTestId('hotel'),
+      getByTestId('room'),
       getByTestId('reason'),
       getByTestId('submitInput'),
     ]);
 
     fireEvent.click(oneWayTypeField);
-    fireEvent.change(travelDateField, {target:{value: '2020-03-01'}});
+    fireEvent.change(travelDateField, {target:{value: '2021-01-31'}});
     fireEvent.change(leavingFromField, {target:{value: 1}});
     fireEvent.change(goingToField, {target:{value: 7}});
+    fireEvent.change(selectHotelField, {target:{value: 1}});
+    fireEvent.change(selectRoomField, {target:{value: 9}});
     fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
-		fireEvent.click(submitButton);
+
+    fireEvent.submit(submitTrip, {preventDefault: jest.fn()})
+
+    expect(queryByText('Back')).toBeInTheDocument();
+
   });
 
   test('User can create a return trip', async () => {
@@ -509,7 +506,63 @@ describe(' ', () => {
         isAuthenticated: true
       }
     };
-    const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+    const { getByTestId, getByPlaceholderText, debug } = render(<BrowserRouter><CreateRequestView /></BrowserRouter>, initialState);
+
+    const [
+			departmentField,
+			firstNameField,
+			managerField,
+			genderField,
+			currencyField,
+			languageField,
+			rememberInfo,
+      submitButton,
+    ] = await waitForElement(() => [
+			getByPlaceholderText('Enter Department'),
+			getByPlaceholderText('Enter First Name'),
+			getByPlaceholderText('Line Manager'),
+			getByPlaceholderText('Select Gender'),
+			getByPlaceholderText('Preferred Currency'),
+			getByPlaceholderText('Preferred Language'),
+      getByTestId('remember'),
+      getByTestId('form-user'),
+    ]);
+
+		fireEvent.change(firstNameField, { target: { value: ''}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: 'd'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: ''}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+
+		fireEvent.change(genderField, { target: { value: 'male'}});
+		fireEvent.blur(genderField);
+
+		fireEvent.change(currencyField, { target: { value: 'Dollars'}});
+		fireEvent.blur(currencyField);
+
+		fireEvent.change(languageField, { target: { value: 'English'}});
+		fireEvent.blur(languageField);
+
+		fireEvent.change(managerField, { target: { value: '1'}});
+    fireEvent.blur(managerField);
+    
+    fireEvent.click(rememberInfo)
+
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: 'devops'}});
+    fireEvent.blur(departmentField);
+    
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
 
     const [
       returnTypeField,
@@ -520,7 +573,7 @@ describe(' ', () => {
       selectHotelField,
       selectRoomField,
       reasonField,
-      submitButton
+      submitTrip
     ] = await waitForElement(() => [
       getByTestId('return'),
       getByTestId('travelDate'),
@@ -541,7 +594,8 @@ describe(' ', () => {
     fireEvent.change(selectHotelField, {target:{value: 1}});
     fireEvent.change(selectRoomField, {target:{value: 9}});
     fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
-    fireEvent.click(submitButton);
+
+    fireEvent.submit(submitTrip, {preventDefault: jest.fn()})
 
   });
 
@@ -561,7 +615,63 @@ describe(' ', () => {
         isAuthenticated: true
       }
     };
-    const { getByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+    const { getByTestId, getByPlaceholderText } = render(<BrowserRouter><CreateRequestView /></BrowserRouter>, initialState);
+
+    const [
+			departmentField,
+			firstNameField,
+			managerField,
+			genderField,
+			currencyField,
+			languageField,
+			rememberInfo,
+      submitButton,
+    ] = await waitForElement(() => [
+			getByPlaceholderText('Enter Department'),
+			getByPlaceholderText('Enter First Name'),
+			getByPlaceholderText('Line Manager'),
+			getByPlaceholderText('Select Gender'),
+			getByPlaceholderText('Preferred Currency'),
+			getByPlaceholderText('Preferred Language'),
+      getByTestId('remember'),
+      getByTestId('form-user'),
+    ]);
+
+		fireEvent.change(firstNameField, { target: { value: ''}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: 'd'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: ''}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+
+		fireEvent.change(genderField, { target: { value: 'male'}});
+		fireEvent.blur(genderField);
+
+		fireEvent.change(currencyField, { target: { value: 'Dollars'}});
+		fireEvent.blur(currencyField);
+
+		fireEvent.change(languageField, { target: { value: 'English'}});
+		fireEvent.blur(languageField);
+
+		fireEvent.change(managerField, { target: { value: '1'}});
+    fireEvent.blur(managerField);
+    
+    fireEvent.click(rememberInfo)
+
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: 'devops'}});
+    fireEvent.blur(departmentField);
+    
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
 
     const [
       returnTypeField,
@@ -572,7 +682,7 @@ describe(' ', () => {
       selectHotelField,
       selectRoomField,
       reasonField,
-      submitButton
+      submitTrip
     ] = await waitForElement(() => [
       getByTestId('return'),
       getByTestId('travelDate'),
@@ -593,9 +703,9 @@ describe(' ', () => {
     fireEvent.change(selectHotelField, {target:{value: 1}});
     fireEvent.change(selectRoomField, {target:{value: 9}});
     fireEvent.change(reasonField, {target:{value: 'Reason for the trip goes here'}});
-    fireEvent.click(submitButton);
+    fireEvent.submit(submitTrip, {preventDefault: jest.fn()})
     fireEvent.change(returnDateField, {target:{value: '2021-03-31'}});
-    fireEvent.click(submitButton);
+    fireEvent.submit(submitTrip, {preventDefault: jest.fn()})
   });
 
   test('User can create a multi-city trip', async () => {
@@ -613,7 +723,63 @@ describe(' ', () => {
         isAuthenticated: true
       }
     };
-    const { getByTestId ,getAllByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+    const { getByTestId, getAllByTestId, getByPlaceholderText, debug } = render(<BrowserRouter><CreateRequestView /></BrowserRouter>, initialState);
+
+    const [
+			departmentField,
+			firstNameField,
+			managerField,
+			genderField,
+			currencyField,
+			languageField,
+			rememberInfo,
+      submitButton,
+    ] = await waitForElement(() => [
+			getByPlaceholderText('Enter Department'),
+			getByPlaceholderText('Enter First Name'),
+			getByPlaceholderText('Line Manager'),
+			getByPlaceholderText('Select Gender'),
+			getByPlaceholderText('Preferred Currency'),
+			getByPlaceholderText('Preferred Language'),
+      getByTestId('remember'),
+      getByTestId('form-user'),
+    ]);
+
+		fireEvent.change(firstNameField, { target: { value: ''}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: 'd'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: ''}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+
+		fireEvent.change(genderField, { target: { value: 'male'}});
+		fireEvent.blur(genderField);
+
+		fireEvent.change(currencyField, { target: { value: 'Dollars'}});
+		fireEvent.blur(currencyField);
+
+		fireEvent.change(languageField, { target: { value: 'English'}});
+		fireEvent.blur(languageField);
+
+		fireEvent.change(managerField, { target: { value: '1'}});
+    fireEvent.blur(managerField);
+    
+    fireEvent.click(rememberInfo)
+
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: 'devops'}});
+    fireEvent.blur(departmentField);
+    
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
 
     const [
       multiCityTypeField,
@@ -623,7 +789,7 @@ describe(' ', () => {
       selectHotelField,
       selectRoomField,
       reasonField,
-      submitButton,
+      submitTrip,
       addTripButton,
       removeBtn,
     ] = await waitForElement(() => [
@@ -675,7 +841,7 @@ describe(' ', () => {
     fireEvent.change(goingToField1[1], {target:{value: 7}});
     fireEvent.change(reasonField1[1], {target:{value: 'Reason for the trip goes here'}});
 
-    fireEvent.click(submitButton);
+    fireEvent.submit(submitTrip, {preventDefault: jest.fn()});
 
   });
 
@@ -692,7 +858,64 @@ describe(' ', () => {
         isAuthenticated: true
       }
     };
-    const { getByTestId ,getAllByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+
+    const { getByTestId, getAllByTestId, getByPlaceholderText, debug } = render(<BrowserRouter><CreateRequestView /></BrowserRouter>, initialState);
+
+    const [
+			departmentField,
+			firstNameField,
+			managerField,
+			genderField,
+			currencyField,
+			languageField,
+			rememberInfo,
+      submitButton,
+    ] = await waitForElement(() => [
+			getByPlaceholderText('Enter Department'),
+			getByPlaceholderText('Enter First Name'),
+			getByPlaceholderText('Line Manager'),
+			getByPlaceholderText('Select Gender'),
+			getByPlaceholderText('Preferred Currency'),
+			getByPlaceholderText('Preferred Language'),
+      getByTestId('remember'),
+      getByTestId('form-user'),
+    ]);
+
+		fireEvent.change(firstNameField, { target: { value: ''}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: 'd'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: ''}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+
+		fireEvent.change(genderField, { target: { value: 'male'}});
+		fireEvent.blur(genderField);
+
+		fireEvent.change(currencyField, { target: { value: 'Dollars'}});
+		fireEvent.blur(currencyField);
+
+		fireEvent.change(languageField, { target: { value: 'English'}});
+		fireEvent.blur(languageField);
+
+		fireEvent.change(managerField, { target: { value: '1'}});
+    fireEvent.blur(managerField);
+    
+    fireEvent.click(rememberInfo)
+
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: 'devops'}});
+    fireEvent.blur(departmentField);
+    
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
 
     const [
       addTripButton,
@@ -714,6 +937,90 @@ describe(' ', () => {
 
   });
 
+  test('User can delete a multi-city trip form', async () => {
+    getLocations.mockImplementation(() => Promise.resolve(locations));
+    getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
+    createATrip.mockImplementation(() => Promise.resolve(responseData));
+
+		getUserProfile.mockImplementation(() => Promise.resolve(userProfile));
+		getUsers.mockImplementation(() => Promise.resolve(managers));
+
+    const initialState = {
+      authState: {
+        isAuthenticated: true
+      }
+    };
+
+    const { getByTestId, getAllByTestId, getByPlaceholderText, debug } = render(<BrowserRouter><CreateRequestView /></BrowserRouter>, initialState);
+
+    const [
+			departmentField,
+			firstNameField,
+			managerField,
+			genderField,
+			currencyField,
+			languageField,
+			rememberInfo,
+      submitButton,
+    ] = await waitForElement(() => [
+			getByPlaceholderText('Enter Department'),
+			getByPlaceholderText('Enter First Name'),
+			getByPlaceholderText('Line Manager'),
+			getByPlaceholderText('Select Gender'),
+			getByPlaceholderText('Preferred Currency'),
+			getByPlaceholderText('Preferred Language'),
+      getByTestId('remember'),
+      getByTestId('form-user'),
+    ]);
+
+		fireEvent.change(firstNameField, { target: { value: ''}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: 'd'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: ''}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+
+		fireEvent.change(genderField, { target: { value: 'male'}});
+		fireEvent.blur(genderField);
+
+		fireEvent.change(currencyField, { target: { value: 'Dollars'}});
+		fireEvent.blur(currencyField);
+
+		fireEvent.change(languageField, { target: { value: 'English'}});
+		fireEvent.blur(languageField);
+
+		fireEvent.change(managerField, { target: { value: '1'}});
+    fireEvent.blur(managerField);
+    
+    fireEvent.click(rememberInfo)
+
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: 'devops'}});
+    fireEvent.blur(departmentField);
+    
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+
+    const [
+      addTripButton,
+
+    ] = await waitForElement(() => [
+      getByTestId('back-btn'),
+    ]);
+
+
+    fireEvent.click(addTripButton);
+
+  });
+
   test('Prevent goingTo from being set to null on form delete', async () => {
     getLocations.mockImplementation(() => Promise.resolve(locations));
     getLocationsWithHotels.mockImplementation(() => Promise.resolve(locationWithHotels));
@@ -729,7 +1036,63 @@ describe(' ', () => {
         isAuthenticated: true
       }
     };
-    const { getByTestId ,getAllByTestId } = render(<BrowserRouter><CreateRequestPage /></BrowserRouter>, initialState);
+    const { getByTestId, getAllByTestId, getByPlaceholderText, debug } = render(<BrowserRouter><CreateRequestView /></BrowserRouter>, initialState);
+
+    const [
+			departmentField,
+			firstNameField,
+			managerField,
+			genderField,
+			currencyField,
+			languageField,
+			rememberInfo,
+      submitButton,
+    ] = await waitForElement(() => [
+			getByPlaceholderText('Enter Department'),
+			getByPlaceholderText('Enter First Name'),
+			getByPlaceholderText('Line Manager'),
+			getByPlaceholderText('Select Gender'),
+			getByPlaceholderText('Preferred Currency'),
+			getByPlaceholderText('Preferred Language'),
+      getByTestId('remember'),
+      getByTestId('form-user'),
+    ]);
+
+		fireEvent.change(firstNameField, { target: { value: ''}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: 'd'}});
+    fireEvent.blur(firstNameField);
+    
+    fireEvent.change(firstNameField, { target: { value: ''}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: ''}});
+		fireEvent.blur(departmentField);
+
+		fireEvent.change(genderField, { target: { value: 'male'}});
+		fireEvent.blur(genderField);
+
+		fireEvent.change(currencyField, { target: { value: 'Dollars'}});
+		fireEvent.blur(currencyField);
+
+		fireEvent.change(languageField, { target: { value: 'English'}});
+		fireEvent.blur(languageField);
+
+		fireEvent.change(managerField, { target: { value: '1'}});
+    fireEvent.blur(managerField);
+    
+    fireEvent.click(rememberInfo)
+
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
+
+    fireEvent.change(firstNameField, { target: { value: 'user'}});
+		fireEvent.blur(firstNameField);
+
+		fireEvent.change(departmentField, { target: { value: 'devops'}});
+    fireEvent.blur(departmentField);
+    
+    fireEvent.submit(submitButton, {preventDefault: jest.fn()});
 
     const [
       multiCityTypeField,
@@ -739,7 +1102,6 @@ describe(' ', () => {
       selectHotelField,
       selectRoomField,
       reasonField,
-      submitButton,
       addTripButton,
     ] = await waitForElement(() => [
       getAllByTestId('multi-city'),
@@ -749,7 +1111,6 @@ describe(' ', () => {
       getAllByTestId('hotel'),
       getAllByTestId('room'),
       getAllByTestId('reason'),
-      getByTestId('submitInput'),
       getByTestId('addbutton'),
     ]);
 
@@ -799,7 +1160,6 @@ describe(' ', () => {
     ]);
 
     fireEvent.click(removeBtns[1]);
-
   });
 
 })

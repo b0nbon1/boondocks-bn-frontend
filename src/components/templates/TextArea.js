@@ -15,12 +15,12 @@ export default function TextArea({
 			<label htmlFor={name}>{label}</label>
 			<textarea
 				name={name}
-				// id={name}
 				className='form-control'
 				placeholder={placeholder}
 				onChange={onChange}
+				minLength='10'
+				maxLength='200'
 				required={required}
-				minLength='15'
 				value={value}
 				data-testid={testId}
 			/>
