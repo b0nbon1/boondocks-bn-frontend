@@ -31,6 +31,7 @@ import rateAccomodationReducer from './rateAccomodationReducer';
 import markAsReadReducer from './markAsReadReducer';
 import feedbackReducer from './feedbackReducer';
 import paymentsReducer from './paymentsReducer';
+import profileCardsReducer from './profileCardsReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
@@ -65,6 +66,7 @@ const reducers = combineReducers({
 	rateAccomodationState: rateAccomodationReducer,
 	feedbackState: feedbackReducer,
 	bookingPaymentState: paymentsReducer,
+	profileCardsState: profileCardsReducer,
 });
 
 export default reducers;

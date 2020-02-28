@@ -1,9 +1,10 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import moxios from 'moxios';
-import { REGISTER_SUCCESS, REGISTER_FAIL } from '../../store/actions/types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, LOADING } from '../../store/actions/types';
 import signup from '../../store/actions/authActions';
 import apiCall from '../../utils/api';
+import actionFunc from '../../utils/actionFunc';
 
 let store;
 const middlewares = [thunk];
@@ -35,6 +36,7 @@ describe('Register Test Suite', () => {
         payload: true,
         type: "BUTTON_LOADING",
       },
+      actionFunc(LOADING, true),
       {
       payload: {
         status: 'success',
@@ -45,7 +47,8 @@ describe('Register Test Suite', () => {
     {
       payload: false,
       type: "BUTTON_LOADING",
-    }
+    },
+    actionFunc(LOADING, false),
   ];
     store = mockStore({});
     const data = {
@@ -78,6 +81,7 @@ describe('Register Test Suite', () => {
         payload: true,
         type: "BUTTON_LOADING",
       },
+      actionFunc(LOADING, true),
       {
       payload: {
         status: 'error',
@@ -88,7 +92,9 @@ describe('Register Test Suite', () => {
     {
       payload: false,
       type: "BUTTON_LOADING",
-    }];
+    },
+    actionFunc(LOADING, false),
+  ];
     store = mockStore({});
     const data = {
         firstName: 'Maste$$',

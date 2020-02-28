@@ -12,3 +12,7 @@ export const updateRequestStatus = async (requestId, status) => {
 export const getSingleRequest = async requestId => {
 	return api.get(`requests/${requestId}`).catch(axiosErrorHandler);
 };
+
+export const getAllRequests = async status => {
+	return api.get(status);
+};

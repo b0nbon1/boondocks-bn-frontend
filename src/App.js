@@ -32,7 +32,7 @@ import BookingContainer from './components/BookingContainer';
 import ViewBooking from './components/ViewBookingContainer';
 import TravelStatsPage from './views/TravelStatsPage';
 import CreateRequestView from './views/requests/CreateRequestView';
-import updateNavbar from './store/actions/navbar/navbarActions';
+import { updateNavbar } from './store/actions/navbar/navbarActions';
 import setAuthenticate from './store/actions/authenticateAction';
 import { nowSeconds } from './lib/time';
 import BookingPayment from './components/payments/BookingPayment';

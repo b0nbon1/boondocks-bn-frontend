@@ -11,7 +11,7 @@ import FormLinks from '../templates/FormLinks';
 import login from '../../store/actions/loginActions';
 import { validation } from '../../utils/validations';
 import SocialAuthButtons from '../templates/SocialAuthButtons';
-import updateNavbar from '../../store/actions/navbar/navbarActions';
+import { updateNavbar } from '../../store/actions/navbar/navbarActions';
 
 export class Login extends Component {
 	constructor(props) {

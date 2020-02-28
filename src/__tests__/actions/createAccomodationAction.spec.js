@@ -7,9 +7,11 @@ import {
 	CREATE_ROOM_SUCCESS,
 	CREATE_ROOM_FAIL,
 	BUTTON_LOADING,
+  LOADING,
 } from '../../store/actions/types';
 import { createHotel, createRoom } from '../../store/actions/accomodations/createAccomodationAction';
 import apiCall from '../../utils/api';
+import actionFunc from '../../utils/actionFunc';
 
 let store;
 const middlewares = [thunk];
@@ -41,6 +43,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: true,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, true),
       {
         payload: { message: "wrong details", status: 'error' },
         type: CREATE_HOTEL_FAIL
@@ -49,6 +52,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: false,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, false),
     ];
     store = mockStore({});
     await store.dispatch(createHotel({}))
@@ -75,6 +79,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: true,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, true),
       {
         payload: { message: "successfully created", status: 'success' },
         type: CREATE_HOTEL_SUCCESS
@@ -83,6 +88,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: false,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, false),
     ];
     store = mockStore({});
     await store.dispatch(createHotel({}))
@@ -109,6 +115,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: true,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, true),
       {
         payload: { message: "wrong details", status: 'error' },
         type: CREATE_ROOM_FAIL
@@ -117,6 +124,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: false,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, false),
     ];
     store = mockStore({});
     await store.dispatch(createRoom({}))
@@ -143,6 +151,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: true,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, true),
       {
         payload: { message: "successfully created", status: 'success' },
         type: CREATE_ROOM_SUCCESS
@@ -151,6 +160,7 @@ describe('Create accomodations Actions Test Suite', () => {
         payload: false,
         type: BUTTON_LOADING,
       },
+      actionFunc(LOADING, false),
     ];
     store = mockStore({});
     await store.dispatch(createRoom({}))

@@ -7,13 +7,11 @@ describe('<Loader /> tests', () => {
 
     const wrapper = shallow(<Loader />);
 
-    expect(wrapper.find('.hide-loader')).toHaveLength(1);
   });
   
   test('should not render <Loader /> ', () => {
 
     const wrapper = shallow(<Loader loading />);
 
-    expect(wrapper.find('.hide-loader')).toHaveLength(0);
 	});
 });

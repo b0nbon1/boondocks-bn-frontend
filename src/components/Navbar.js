@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NavbarNav from './NavbarNav';
-import updateNavbar from '../store/actions/navbar/navbarActions';
+import { updateNavbar } from '../store/actions/navbar/navbarActions';
 
 class Navbar extends Component {
 	componentDidMount() {
