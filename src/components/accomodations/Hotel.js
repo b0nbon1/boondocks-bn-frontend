@@ -167,7 +167,6 @@ export default function Hotel({ data }) {
 					</div>
 				</div>
 			</div>
-
 		</div>
 	);
 }

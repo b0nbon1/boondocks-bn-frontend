@@ -44,6 +44,7 @@ const fetchUserProfile = (
 					  })
 					: profile),
 				birthDate: profile.birthDate && profile.birthDate.split('T')[0],
+				profilePicture: profile.profilePicture,
 			}),
 			managers,
 			userId,
@@ -127,6 +128,10 @@ const updateProfile = input => async dispatch => {
 			validate: () => true,
 			errorMessage: '',
 		},
+		profilePicture: {
+			validate: () => true,
+			errorMessage: '',
+		},
 	};
 	const name = Object.keys(input)[0];
 	let errorMessage = null;
@@ -198,6 +203,12 @@ export const transformProfile = (userProfile, dispatch) => {
  */
 const saveProfile = userProfile => async dispatch => {
 	const profile = transformProfile(userProfile, dispatch);
+	const objectKeys = Object.keys(profile);
+	const data = new FormData();
+
+	objectKeys.forEach(key => {
+		data.append(key, profile[key]);
+	});
 	dispatch(actionFunc(BUTTON_LOADING, true));
 
 	if (!profile) {
@@ -205,7 +216,7 @@ const saveProfile = userProfile => async dispatch => {
 		return false;
 	}
 
-	await updateUserProfile(profile);
+	await updateUserProfile(data);
 	const { userId } = JSON.parse(localStorage.getItem('bn_user_data'));
 	const profileData = await getUserProfile(userId);
 	const updatedProfile = profileData.data.data;

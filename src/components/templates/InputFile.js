@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function InputFile({ label, name, value, onChange }) {
+function InputFile({ label, name, value, onChange, required, accept, testId }) {
 	return (
 		<div className='d-flex flex-column' data-test='input-form'>
 			<label htmlFor={name}>{label}</label>
@@ -11,7 +11,9 @@ function InputFile({ label, name, value, onChange }) {
 					type='file'
 					className='custom-file-input'
 					onChange={onChange}
-					required
+					required={required}
+					accept={accept}
+					data-testid={testId}
 				/>
 				<label className='custom-file-label' htmlFor={name}>
 					{value}
@@ -29,11 +31,17 @@ InputFile.propTypes = {
 	value: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	onChange: PropTypes.func,
+	required: PropTypes.string,
+	accept: PropTypes.string,
+	testId: PropTypes.string,
 };
 
 InputFile.defaultProps = {
 	label: null,
 	onChange: null,
+	required: null,
+	accept: null,
+	testId: null,
 };
 
 export default InputFile;
