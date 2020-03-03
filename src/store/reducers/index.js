@@ -32,6 +32,7 @@ import markAsReadReducer from './markAsReadReducer';
 import feedbackReducer from './feedbackReducer';
 import paymentsReducer from './paymentsReducer';
 import profileCardsReducer from './profileCardsReducer';
+import documentsReducer from './documentsReducer';
 
 const reducers = combineReducers({
 	signupState: signupReducer,
@@ -67,6 +68,7 @@ const reducers = combineReducers({
 	feedbackState: feedbackReducer,
 	bookingPaymentState: paymentsReducer,
 	profileCardsState: profileCardsReducer,
+	documentsState: documentsReducer,
 });
 
 export default reducers;

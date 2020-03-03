@@ -36,6 +36,7 @@ import { updateNavbar } from './store/actions/navbar/navbarActions';
 import setAuthenticate from './store/actions/authenticateAction';
 import { nowSeconds } from './lib/time';
 import BookingPayment from './components/payments/BookingPayment';
+import TravelDocuments from './components/TravelDocuments';
 
 /**
  * App component
@@ -140,6 +141,7 @@ export const App = ({ isAuthenticated, setAuthenticate, updateNavbar }) => {
 						exact
 						component={ViewProfileContainer}
 					/>
+					<ProtectedRoute path='/documents' exact component={TravelDocuments} />
 					<ProtectedRoute path='/requests' exact component={RequestPage} />
 					<ProtectedRoute path='/booking' exact component={ViewBooking} />
 					<ProtectedRoute path='/users' component={UsersContainer} />
